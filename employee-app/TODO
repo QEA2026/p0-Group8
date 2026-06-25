@@ -1,0 +1,11 @@
+Step 0 - CHECK
+Action: You need to execute schema.sql against expense_manager.db. You can do this via a VS Code SQLite extension, the terminal (sqlite3 expense_manager.db < schema.sql), or a temporary Python script.
+Seed Data: Manually INSERT one employee user into the database so you have credentials to test your login against.
+
+STEP 1 - CHECK
+Step 1: The Foundation (database.py)
+Concept: This file acts as your connection factory.
+
+Action: Write a function (e.g., get_db_connection()) that connects to expense_manager.db.
+
+Best Practice: Ensure you enable foreign key constraints here, as SQLite sometimes disables them by default (e.g., cursor.execute("PRAGMA foreign_keys = ON")).

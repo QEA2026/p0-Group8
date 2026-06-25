@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-db_name = "database.db"
+db_name = "expense_manager.db"
 
 # Connect to the database
 conn = sqlite3.connect(db_name)
