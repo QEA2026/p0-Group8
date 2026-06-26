@@ -10,9 +10,36 @@ Action: Write a function (e.g., get_db_connection()) that connects to expense_ma
 
 Best Practice: Ensure you enable foreign key constraints here, as SQLite sometimes disables them by default (e.g., cursor.execute("PRAGMA foreign_keys = ON")).
 -----
+STEP 2 - CHECK
 Step 2: The Model (user_model.py + expense_model.py + approval_model.py) - 
 Concept: Models are simple Data Transfer Objects (DTOs) for each SQL table. They hold data but contain no business logic.
 
 Action: Create a User class with an __init__ method that accepts id, username, password, and role.
 -----
+STEP 3 - CHECK
+Step 3: The Data Access Layer (user_repository.py, expense_repository.py, approval_repository.py)
+Concept: Repositories are the only files allowed to speak SQL.
 
+Action: Create a function like get_user_by_username(username). This function should call get_db_connection(), execute a SELECT * FROM users WHERE username = ? query, and if a row is found, return a User model object. If not, return None.
+-----
+
+USER STORY 0 - DONE 
+ *Repository Folder is finished except for __init__.py
+
+-----
+STEP 4 - 
+Step 4: The Business Logic Layer (authentication_service.py)
+Concept: Services make decisions. They don't know about SQL, and they don't know about the CLI.
+
+Action: Create a function like login(username, password).
+1. It calls user_repository.get_user_by_username(username).
+2. If the user doesn't exist, it raises an error or returns False.
+3. If the user exists, it checks if the provided password matches the database password. (For the MVP, plain text comparison is fine; you can add hashing later).
+4. It validates that the user's role is indeed 'Employee'.
+5. Returns the User object (or just the id) if successful.
+-----
+STEP 5 - 
+Step 5: The Presentation Layer (auth_controller.py)
+Concept: Controllers handle the UI (in this case, the terminal).
+
+Action: Write the input() statements to ask the user for their username and password. Pass those inputs to authentication_service.login(). Handle the response by printing a success message or an error message. If successful, return the user_id to your main.py so the app knows who is currently logged in.
