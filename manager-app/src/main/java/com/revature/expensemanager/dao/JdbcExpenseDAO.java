@@ -49,6 +49,7 @@ public class JdbcExpenseDAO implements ExpenseDAO {
                 """;
 
         List<Expense> expenses = new ArrayList<>();
+
         try (Connection conn = DatabaseConfig.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
@@ -61,7 +62,7 @@ public class JdbcExpenseDAO implements ExpenseDAO {
             throw new RuntimeException("Error finding pending expenses.", e);
         }
 
-        return null;
+        return expenses;
     }
 
     private Expense mapResultSetToExpense(ResultSet rs) throws SQLException {
