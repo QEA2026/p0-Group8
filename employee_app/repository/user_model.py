@@ -7,14 +7,12 @@ class User:
     id: Optional[int] = None
     username: str = ""
     password: str = ""
-    email: str = ""
+    role: str = ""  # Default role is Employee
 
     def __post_init__(self):
         if not self.username:
             raise ValueError("Username cannot be empty.")
         if not self.password:
             raise ValueError("Password cannot be empty.")
-        if not self.email:
-            raise ValueError("Email cannot be empty.")
-        if self.role != "Employee":
-            raise ValueError("Role must be 'Employee' to access the application.")
+        if not self.role:
+            raise ValueError("Role cannot be empty.")

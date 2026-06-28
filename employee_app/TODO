@@ -1,6 +1,6 @@
 Step 0 - CHECK
-Action: You need to execute schema.sql against expense_manager.db. You can do this via a VS Code SQLite extension, the terminal (sqlite3 expense_manager.db < schema.sql), or a temporary Python script.
-Seed Data: Manually INSERT one employee user into the database so you have credentials to test your login against.
+Action: You need to execute schema.sql against expense_manager.db. You can do this via a VS Code SQLite extension, the terminal, or a temporary Python script.
+Seed Data: Users are now seeded dynamically through the authentication service during database initialization.
 -----
 STEP 1 - CHECK
 Step 1: The Foundation (database.py)
@@ -14,28 +14,28 @@ STEP 2 - CHECK
 Step 2: The Model (user_model.py + expense_model.py + approval_model.py) - 
 Concept: Models are simple Data Transfer Objects (DTOs) for each SQL table. They hold data but contain no business logic.
 
-Action: Create a User class with an __init__ method that accepts id, username, password, and role.
+Action: Create a User dataclass that accepts id, username, password, and role.
 -----
 STEP 3 - CHECK
 Step 3: The Data Access Layer (user_repository.py, expense_repository.py, approval_repository.py)
 Concept: Repositories are the only files allowed to speak SQL.
 
-Action: Create a function like get_user_by_username(username). This function should call get_db_connection(), execute a SELECT * FROM users WHERE username = ? query, and if a row is found, return a User model object. If not, return None.
+Action: Create a function like find_by_username(username). This function should call get_db_connection(), execute a SELECT id, username, password, role FROM users WHERE username = ? query, and if a row is found, return a User model object. If not, return None.
 -----
 
 USER STORY 0 - DONE 
  *Repository Folder is finished except for __init__.py
 
 -----
-STEP 4 - 
+STEP 4 - CHECK
 Step 4: The Business Logic Layer (authentication_service.py)
 Concept: Services make decisions. They don't know about SQL, and they don't know about the CLI.
 
 Action: Create a function like login(username, password).
-1. It calls user_repository.get_user_by_username(username).
+1. It calls user_repository.find_by_username(username).
 2. If the user doesn't exist, it raises an error or returns False.
-3. If the user exists, it checks if the provided password matches the database password. (For the MVP, plain text comparison is fine; you can add hashing later).
-4. It validates that the user's role is indeed 'Employee'.
+3. If the user exists, it checks if the provided password matches the database password.
+4. It blocks managers at login instead of at creation time.
 5. Returns the User object (or just the id) if successful.
 -----
 STEP 5 - 

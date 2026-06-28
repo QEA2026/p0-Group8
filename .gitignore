@@ -19,6 +19,9 @@ Thumbs.db
 # Logs
 *.log
 
+# Python cache
+__pycache__/
+
 # Generated package archives
 *.jar
 *.war

@@ -24,3 +24,15 @@ class UserRepository:
             if row:
                 return User(id=row["id"], username=row["username"], password=row["password"], role=row["role"])
             return None
+        
+    def create_user(self, user: User) -> User:
+        # Inserts a new user into the database and returns the user with their new ID.
+        with self.db.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+                (user.username, user.password, user.role)
+            )
+            # Grab the auto-generated ID from the database and assign it to the model
+            user.id = cursor.lastrowid
+            return user
