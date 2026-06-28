@@ -3,23 +3,25 @@
 */
 
 -- 1. Wipe out test data from before in reverse dependency order
-DELETE FROM approvals;
-DELETE FROM expenses;
-DELETE FROM users;
+-- DELETE FROM approvals;
+-- DELETE FROM expenses;
+-- DELETE FROM users;
+-- 1.1 Table deletion handled by schema.sql
 
 -- 2. Insert test users
-INSERT INTO users (username, password, role) VALUES
-('brian', 'password','Employee'),
-('landon', 'passwerd','Employee'),
-('siri', 'password','Manager');
+-- INSERT INTO users (username, password, role) VALUES
+-- ('brian', 'password','Employee'),
+-- ('landon', 'passwerd','Employee'),
+-- ('siri', 'password','Manager');
+-- 2.1 This section is now handled dynamically by the service layer, so no static inserts are needed
 
 
 -- 3. Insert Expenses
 INSERT INTO expenses (userId, amount, description, category, date) VALUES
-(3, 199.99, 'A desk','Utilities', '2026-06-19'),
+(2, 199.99, 'A desk','Utilities', '2026-06-19'),
 (1, 57.77, 'Poke-buzz-balls', 'Food', '2026-06-20'),
 (2, 23.88, 'Chipotle lunch w/ guacamole', 'Food', '2026-06-23'),
-(3, 49.99, 'Database streaming service expense', 'Entertainment', '2026-06-24');
+(1, 49.99, 'Database streaming service expense', 'Entertainment', '2026-06-24');
 
 
 --4. Insert Approvals
