@@ -12,12 +12,12 @@ class ConnectToDB:
 
         # Locates the database file relative to the project structure if no path is provided
         else:
-            # Get the directory where database.py itself is saved (./employee-app)
+            # Get the directory where database.py itself is saved (./employee_app/repository)
             current_dir = os.path.dirname(os.path.abspath(__file__))
             
-            # Go up one level to the root folder, then go down into the database folder
-            root_dir = os.path.dirname(current_dir)
-            self.db_path = os.path.join(root_dir, "database", "expense_manager.db")
+            # Go up two levels to project root, then into ./database
+            project_root = os.path.dirname(os.path.dirname(current_dir))
+            self.db_path = os.path.join(project_root, "database", "expense_manager.db")
 
         # Optional: Use environment variable for database path if using .env file
         # os.getenv('DATABASE_PATH', 'expense_manager.db')

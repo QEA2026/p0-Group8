@@ -14,9 +14,11 @@ class AuthenticationService:
         self.user_repository = user_repository
         # Best Practice: Pull secret key from environment variables, fallback to default for dev
         self.jwt_secret = jwt_secret or os.environ.get("JWT_SECRET", 'dev-secret-key')
-        self.jwt_secret_key = self.jwt_secret
         self.jwt_algorithm = jwt_algorithm
-        hours_config = int(os.environ.get("TOKEN_EXPIRY_HOURS", 24))
+        try:
+            hours_config = int(os.environ.get("TOKEN_EXPIRY_HOURS", 24))
+        except (TypeError, ValueError):
+            hours_config = 24
         self.token_expiry_hours = hours_config
         self.token_expiry = timedelta(hours=hours_config)
 
@@ -56,7 +58,7 @@ class AuthenticationService:
     # Verifies a JWT token and returns the payload if valid
     def verify_jwt_token(self, token: str) -> Optional[Dict[str, Any]]:
         try:
-            return jwt.decode(token, self.jwt_secret_key, algorithms=[self.jwt_algorithm])
+            return jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_algorithm])
         except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
             # Grouped exceptions together
             return None
@@ -69,7 +71,7 @@ class AuthenticationService:
         return None
     
     # Handles the login process for a user, including authentication and role-based access control
-    def login(self, username, raw_password):
+    def login(self, username: str, raw_password: str) -> User:
         # 1. Fetch the user from the repository
         user = self.user_repository.find_by_username(username)
         if not user:
