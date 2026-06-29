@@ -38,8 +38,56 @@ Action: Create a function like login(username, password).
 4. It blocks managers at login instead of at creation time.
 5. Returns the User object (or just the id) if successful.
 -----
-STEP 5 - 
-Step 5: The Presentation Layer (auth_controller.py)
-Concept: Controllers handle the UI (in this case, the terminal).
 
-Action: Write the input() statements to ask the user for their username and password. Pass those inputs to authentication_service.login(). Handle the response by printing a success message or an error message. If successful, return the user_id to your main.py so the app knows who is currently logged in.
+USER STORY 1 - Gateway - DONE 
+ *Repository Folder is finished except for __init__.py
+_____
+
+FOR USER STORY 2 - Submitting expenses (STEPS 5-9)
+
+COMPLETED:
+* employee_app/repository/expense_model.py -> The Python object for an Expense
+* employee_app/repository/expense_repository.py -> Database INSERT logic (Plus all User Story 1 security and database setup)
+* employee_app/service/authentication_service.py -> Core security dependencies (Bcrypt password hashing and JWT secret/expiry configuration).
+
+TO BE IMPLEMENTED:
+(BACKEND)
+* employee_app/api/auth_controller.py -> Terminal prompts for user login and jwt session 
+* employee_app/api/auth.py -> The Flask decorator (@require_employee_auth) to protect routes.
+* employee_app/service/expense_service.py -> Validation, date auto-generation, linking the approval
+* employee_app/controller/expense_controller.py -> Terminal prompts for amount/description
+
+(FRONTEND)
+employee_app/cli.py -> Holds the input() statements for the user's username, password, expense amount, and description. It talks to the Flask API.
+
+-----
+STEP 5 - 
+Step 5: The Backend Authentication API (auth_controller.py & auth.py)
+Concept: Controllers handle incoming web requests and return HTTP responses.
+
+Action: Build the Flask /api/auth/login endpoint. It should extract the JSON credentials from the HTTP request, pass them to authentication_service.login(), generate a JWT, and return it as an HTTP-Only cookie. Also, implement the @require_employee_auth decorator in auth.py to protect future routes.
+-----
+STEP 6 - 
+Step 6: Step 6: The Frontend Terminal Login (cli.py & main.py)
+Concept: The CLI acts as the user interface, completely separate from the backend server.
+
+Action: Setup main.py to run the Flask server on port 5000. Then, create cli.py and write the input() statements to ask the user for their username and password. Use the Python requests library to send this data to the Flask login endpoint and capture the JWT session cookie if successful.
+-----
+STEP 7 -
+Step 7: The Expense Business Logic (expense_service.py)
+Concept: Services enforce business rules before data reaches the repository.
+
+Action: Write a create_expense(user_id, amount, description) function. Validate that the amount is a positive number, generate the current date string, pass the data to expense_repository, and automatically generate a linked "pending" record in the approvals table.
+-----
+STEP 8 -
+Step 8: The Backend Expense API (expense_controller.py)
+Concept: Expose the expense submission functionality to the web via an API endpoint.
+
+Action: Create a Flask blueprint and a /submit route. Protect it with your @require_employee_auth decorator. Extract the amount and description from the incoming JSON request, extract the user_id from the secure token, and pass everything to expense_service.create_expense().
+-----
+STEP 9 - 
+Step 9: The Frontend Terminal Expense Submission (cli.py)
+Concept: The user interface for the core feature of the application.
+
+Action: Add an expense submission option to your terminal menu inside cli.py. Use input() to capture the amount and description. Send an HTTP POST request (along with the saved JWT cookie) to the backend /submit endpoint and print the success or error message to the user.
+-----
