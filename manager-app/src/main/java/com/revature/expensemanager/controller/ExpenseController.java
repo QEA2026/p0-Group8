@@ -23,7 +23,7 @@ public class ExpenseController {
 
         if (!isManagerLoggedIn(session)) {
             ctx.status(HttpStatus.UNAUTHORIZED)
-                    .json(new ErrorResponse("Manage login required."));
+                    .json(new ErrorResponse("Manager login required."));
             return;
         }
 
@@ -37,7 +37,7 @@ public class ExpenseController {
 
         if (!isManagerLoggedIn(session)) {
             ctx.status(HttpStatus.UNAUTHORIZED)
-                    .json(new ErrorResponse("Manage login required."));
+                    .json(new ErrorResponse("Manager login required."));
             return;
         }
 
