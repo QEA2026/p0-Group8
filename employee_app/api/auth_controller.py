@@ -2,7 +2,7 @@
 from flask import Blueprint, request, jsonify, make_response, current_app
 from service.authentication_service import AuthenticationService
 
-
+# 1. Create the Blueprint (The routing map)
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 def get_auth_service() -> AuthenticationService:
