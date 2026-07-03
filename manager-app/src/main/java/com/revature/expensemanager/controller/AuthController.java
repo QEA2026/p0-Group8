@@ -4,18 +4,20 @@ import java.util.Optional;
 
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import jakarta.servlet.http.HttpSession;
 
 import com.revature.expensemanager.dto.ErrorResponse;
 import com.revature.expensemanager.dto.LoginRequest;
 import com.revature.expensemanager.dto.LoginResponse;
 import com.revature.expensemanager.service.AuthService;
+import com.revature.expensemanager.service.JwtService;
 
 public class AuthController {
     private final AuthService authService;
+    private final JwtService jwtService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, JwtService jwtService) {
         this.authService = authService;
+        this.jwtService = jwtService;
     }
 
     public void login(Context ctx) {
@@ -32,11 +34,12 @@ public class AuthController {
 
         LoginResponse response = loginResponse.orElseThrow();
 
-        HttpSession session = ctx.req().getSession();
+        String token = jwtService.generateToken(
+                response.getId(),
+                response.getUsername(),
+                response.getRole());
 
-        session.setAttribute("userId", response.getId());
-        session.setAttribute("username", response.getUsername());
-        session.setAttribute("role", response.getRole());
+        response.setToken(token);
 
         ctx.status(HttpStatus.OK).json(response);
     }

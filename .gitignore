@@ -19,6 +19,10 @@ Thumbs.db
 # Logs
 *.log
 
+# Environment files
+.env
+**/.env
+
 # Generated package archives
 *.jar
 *.war
