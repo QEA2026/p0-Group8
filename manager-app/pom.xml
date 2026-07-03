@@ -53,6 +53,14 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.22.0</version>
         </dependency>
+
+        <!-- Jackson CSV support (serialize Java objects to CSV and deserialize CSV into Java objects) -->
+        <!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-csv -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+            <version>2.22.0</version>
+        </dependency>
         
     </dependencies>
 

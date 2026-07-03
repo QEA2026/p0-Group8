@@ -7,6 +7,7 @@ import java.util.List;
 import com.revature.expensemanager.dto.ErrorResponse;
 import com.revature.expensemanager.model.Expense;
 import com.revature.expensemanager.model.ExpenseCategory;
+import com.revature.expensemanager.service.ReportExportService;
 import com.revature.expensemanager.service.ReportService;
 
 import io.javalin.http.Context;
@@ -14,9 +15,11 @@ import io.javalin.http.HttpStatus;
 
 public class ReportController {
     private final ReportService reportService;
+    private final ReportExportService reportExportService;
 
-    public ReportController(ReportService reportService) {
+    public ReportController(ReportService reportService, ReportExportService reportExportService) {
         this.reportService = reportService;
+        this.reportExportService = reportExportService;
     }
 
     public void getExpensesByEmployee(Context ctx) {
@@ -51,6 +54,7 @@ public class ReportController {
         }
 
         List<Expense> expenses = reportService.getExpensesByEmployee(userId);
+        exportIfRequested(ctx, expenses, "employee_report");
         ctx.status(HttpStatus.OK).json(expenses);
     }
 
@@ -68,6 +72,7 @@ public class ReportController {
         }
 
         List<Expense> expenses = reportService.getExpensesByCategory(category.name());
+        exportIfRequested(ctx, expenses, "category_report");
         ctx.status(HttpStatus.OK).json(expenses);
     }
 
@@ -100,6 +105,16 @@ public class ReportController {
         }
 
         List<Expense> expenses = reportService.getExpensesByDateRange(startDate, endDate);
+        exportIfRequested(ctx, expenses, "date_report");
         ctx.status(HttpStatus.OK).json(expenses);
+    }
+
+    private void exportIfRequested(Context ctx, List<Expense> expenses, String reportName) {
+        String exportParam = ctx.queryParam("export");
+
+        if ("true".equalsIgnoreCase(exportParam)) {
+            String filePath = reportExportService.exportExpensesToCsv(expenses, reportName);
+            ctx.header("Report-File", filePath);
+        }
     }
 }

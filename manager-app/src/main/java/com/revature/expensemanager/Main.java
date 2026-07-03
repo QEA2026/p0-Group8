@@ -14,6 +14,7 @@ import com.revature.expensemanager.dao.UserDAO;
 import com.revature.expensemanager.dto.ErrorResponse;
 import com.revature.expensemanager.service.AuthService;
 import com.revature.expensemanager.service.ExpenseService;
+import com.revature.expensemanager.service.ReportExportService;
 import com.revature.expensemanager.service.ReportService;
 
 import io.javalin.Javalin;
@@ -32,10 +33,11 @@ public class Main {
         AuthService authService = new AuthService(userDAO);
         ExpenseService expenseService = new ExpenseService(expenseDAO, approvalDAO);
         ReportService reportService = new ReportService(reportDAO, userDAO);
+        ReportExportService reportExportService = new ReportExportService();
 
         AuthController authController = new AuthController(authService);
         ExpenseController expenseController = new ExpenseController(expenseService);
-        ReportController reportController = new ReportController(reportService);
+        ReportController reportController = new ReportController(reportService, reportExportService);
 
         Javalin app = Javalin.create(config -> {
             config.routes.post("/login", authController::login);
