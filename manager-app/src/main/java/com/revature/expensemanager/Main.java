@@ -31,7 +31,7 @@ public class Main {
 
         AuthService authService = new AuthService(userDAO);
         ExpenseService expenseService = new ExpenseService(expenseDAO, approvalDAO);
-        ReportService reportService = new ReportService(reportDAO);
+        ReportService reportService = new ReportService(reportDAO, userDAO);
 
         AuthController authController = new AuthController(authService);
         ExpenseController expenseController = new ExpenseController(expenseService);

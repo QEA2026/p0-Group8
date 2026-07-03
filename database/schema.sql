@@ -14,7 +14,18 @@ CREATE TABLE expenses (
     userId INTEGER NOT NULL,
     amount REAL NOT NULL,
     description TEXT NOT NULL,
-    category TEXT NOT NULL,
+    category TEXT NOT NULL CHECK (
+        category IN (
+            'TRAVEL',
+            'MEALS',
+            'LODGING',
+            'OFFICE_SUPPLIES',
+            'EQUIPMENT',
+            'SOFTWARE',
+            'TRAINING',
+            'OTHER'
+        )
+    ),
     date TEXT NOT NULL,
     FOREIGN KEY (userId) REFERENCES users(id)
 );
