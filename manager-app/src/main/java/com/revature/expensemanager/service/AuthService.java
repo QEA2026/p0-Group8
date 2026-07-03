@@ -2,6 +2,8 @@ package com.revature.expensemanager.service;
 
 import java.util.Optional;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import com.revature.expensemanager.dao.UserDAO;
 import com.revature.expensemanager.dto.LoginRequest;
 import com.revature.expensemanager.dto.LoginResponse;
@@ -27,7 +29,7 @@ public class AuthService {
         }
 
         return userDAO.findByUsername(username)
-                .filter(user -> user.getPassword().equals(password))
+                .filter(user -> BCrypt.checkpw(password, user.getPassword()))
                 .filter(user -> user.getRole().equalsIgnoreCase("manager"))
                 .map(user -> new LoginResponse(
                         user.getId(),
