@@ -19,14 +19,6 @@ public class ExpenseController {
     }
 
     public void getPendingExpenses(Context ctx) {
-        HttpSession session = ctx.req().getSession(false);
-
-        if (!isManagerLoggedIn(session)) {
-            ctx.status(HttpStatus.UNAUTHORIZED)
-                    .json(new ErrorResponse("Manager login required."));
-            return;
-        }
-
         List<Expense> pendingExpenses = expenseService.getPendingExpenses();
 
         ctx.status(HttpStatus.OK).json(pendingExpenses);
@@ -35,16 +27,10 @@ public class ExpenseController {
     public void reviewExpense(Context ctx) {
         HttpSession session = ctx.req().getSession(false);
 
-        if (!isManagerLoggedIn(session)) {
-            ctx.status(HttpStatus.UNAUTHORIZED)
-                    .json(new ErrorResponse("Manager login required."));
-            return;
-        }
-
         int expenseId;
 
         try {
-            expenseId = Integer.parseInt(ctx.pathParam("expenseId"));
+            expenseId = Integer.parseInt(ctx.pathParam("id"));
         } catch (NumberFormatException e) {
             ctx.status(HttpStatus.BAD_REQUEST)
                     .json(new ErrorResponse("Invalid expense id."));
@@ -59,21 +45,10 @@ public class ExpenseController {
 
         if (!reviewed) {
             ctx.status(HttpStatus.BAD_REQUEST)
-                    .json("Unable to review expense");
-
+                    .json(new ErrorResponse("Unable to review expense"));
+            return;
         }
         ctx.status(HttpStatus.OK)
                 .json("Expense reviewed successfully");
-    }
-
-    private boolean isManagerLoggedIn(HttpSession session) {
-        if (session == null) {
-            return false;
-        }
-
-        Object role = session.getAttribute("role");
-
-        return role instanceof String
-                && "manager".equalsIgnoreCase((String) role);
     }
 }

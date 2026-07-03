@@ -26,7 +26,7 @@ public class AuthController {
         if (loginResponse.isEmpty()) {
             ctx.status(HttpStatus.UNAUTHORIZED)
                     .json(new ErrorResponse(
-                            "Invalid username, password, or manager role."));
+                            "Invalid username or password. This login portal is for managers only."));
             return;
         }
 
