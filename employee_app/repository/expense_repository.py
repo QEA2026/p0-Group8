@@ -1,6 +1,7 @@
 # Contains the ExpenseRepository class for interacting with the expenses table in the database.
 from .database import ConnectToDB
 from .expense_model import Expense
+from .ledger_entry_model import LedgerEntry
 from typing import List, Optional
 
 class ExpenseRepository:
@@ -58,6 +59,47 @@ class ExpenseRepository:
                     category=row["category"],
                     date=row["date"]
                 ) for row in rows]
+
+    # Retrieve ledger rows for a specific user by joining expenses with approvals.
+    # The returned read model is used by service-layer grouping (pending vs history).
+    def get_expenses_by_user(self, user_id: int) -> List[LedgerEntry]:
+        with self.db.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                '''
+                SELECT
+                    e.id,
+                    e.userId,
+                    e.amount,
+                    e.description,
+                    e.category,
+                    e.date,
+                    a.status,
+                    a.comment,
+                    a.review_date
+                FROM expenses e
+                LEFT JOIN approvals a ON e.id = a.expenseId
+                WHERE e.userId = ?
+                ORDER BY e.date DESC, e.id DESC
+                ''',
+                (user_id,)
+            )
+            rows = cursor.fetchall()
+
+            return [
+                LedgerEntry(
+                    expense_id=row["id"],
+                    user_id=row["userId"],
+                    amount=row["amount"],
+                    description=row["description"],
+                    category=row["category"],
+                    expense_date=row["date"],
+                    status=row["status"] if row["status"] else "Pending",
+                    manager_comment=row["comment"],
+                    review_date=row["review_date"],
+                )
+                for row in rows
+            ]
     
     # Update existing expense details in the database. Returns the updated Expense object.
     def update_expense(self, expense: Expense) -> Expense:

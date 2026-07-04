@@ -44,4 +44,30 @@ def submit_expense():
     except Exception as e:
         # A catch-all for any unexpected database crashes
         return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
+
+
+@expense_bp.route('/ledger', methods=['GET'])
+@require_employee_auth
+def get_ledger():
+    """Returns grouped ledger data for the authenticated employee."""
+    # A. Identify the logged-in employee attached by the auth decorator
+    user = request.current_user
+
+    try:
+        # B. Resolve the live service from Flask app context
+        expense_service = current_app.expense_service
+
+        # C. Ask the service for grouped ledger views (pending + history)
+        ledger_data = expense_service.get_user_ledger(user.id)
+
+        # D. Return the grouped payload for CLI/client rendering
+        return jsonify(ledger_data), 200
+
+    except ValueError as e:
+        # Service-level validation/processing errors
+        return jsonify({"error": str(e)}), 400
+
+    except Exception as e:
+        # Catch-all for unexpected failures
+        return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
     
