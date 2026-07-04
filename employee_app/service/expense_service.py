@@ -4,6 +4,7 @@ from repository.expense_model import Expense
 from repository.ledger_entry_model import LedgerEntry
 from repository.expense_repository import ExpenseRepository
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 from enum import Enum
 from typing import Dict, List
 
@@ -23,18 +24,29 @@ class ExpenseCategory(str, Enum):
 class ExpenseService:
     def __init__(self, expense_repository: ExpenseRepository):
         self.expense_repo = expense_repository
+
+    @staticmethod
+    def _parse_currency_amount(amount) -> Decimal:
+        """Parse and validate money as a positive Decimal with max 2 fraction digits."""
+        try:
+            parsed_amount = Decimal(str(amount).strip())
+        except (InvalidOperation, ValueError, TypeError):
+            raise ValueError("Expense amount must be a valid number.")
+
+        if parsed_amount <= 0:
+            raise ValueError("Expense amount must be greater than zero.")
+
+        # Accept values like 45 or 45.5, but block >2 decimal places (e.g., 45.555)
+        if parsed_amount.as_tuple().exponent < -2:
+            raise ValueError("Expense amount must have at most 2 decimal places.")
+
+        return parsed_amount
     
     def create_expense(self, user_id: int, amount: float, description: str, category: str, expense_date: str) -> Expense: 
         """ Validates input, checks date format, and saves the new expense. """
 
         # 1. Number Validation
-        try:
-            amount = float(amount)
-        except ValueError:
-            raise ValueError("Expense amount must be a valid number.")
-        
-        if amount <= 0:
-            raise ValueError("Expense amount must be greater than zero.")
+        clean_amount = self._parse_currency_amount(amount)
         
         # 2. Description Validation
         if not description or not description.strip():
@@ -61,7 +73,7 @@ class ExpenseService:
         new_expense = Expense(
             id=None,
             user_id=user_id,
-            amount=amount,
+            amount=float(clean_amount),
             description=description.strip(),
             category=clean_category,
             date=expense_date
@@ -100,11 +112,13 @@ class ExpenseService:
 
     def _serialize_ledger_entry(self, entry: LedgerEntry) -> dict:
         """Convert a LedgerEntry read model into a JSON-safe dictionary."""
+        amount_decimal = self._parse_currency_amount(entry.amount)
+
         # Keep key names explicit and stable for downstream CLI/client rendering
         return {
             "expense_id": entry.expense_id,
             "user_id": entry.user_id,
-            "amount": entry.amount,
+            "amount": f"{amount_decimal:.2f}",
             "description": entry.description,
             "category": entry.category,
             "expense_date": entry.expense_date,
