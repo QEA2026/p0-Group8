@@ -151,3 +151,60 @@ Action: Add a protected endpoint that reads the logged-in user from @require_emp
 USER STORY 3 - THE LEDGER - DONE
  * Backend implementation in this app is complete (Steps 10-12).
  * Client/CLI rendering is owned by Siri.
+
+_____
+
+FOR USER STORY 4 - The Eraser (Edit/Delete Pending Expenses) (STEPS 13-15)
+
+COMPLETED (PREREQS):
+* employee_app/repository/expense_repository.py -> Existing create/find/delete plumbing is in place.
+* employee_app/service/expense_service.py -> Existing validation layer and user-aware flows are in place.
+* employee_app/api/auth.py -> Employee auth guard already exists for protected routes.
+
+TO BE IMPLEMENTED:
+(BACKEND)
+* None pending for User Story 4 backend (Steps 13-15 complete).
+
+COMPLETED THIS SESSION (BACKEND)
+* employee_app/repository/expense_repository.py -> Added find_expense_with_status(expense_id) and narrowed update_expense to editable fields (amount, description).
+* employee_app/service/expense_service.py -> Added get_pending_expenses, update_pending_expense, and delete_pending_expense with ownership + pending-status guards.
+* employee_app/api/expense_controller.py -> Added protected GET /expenses/pending, PUT /expenses/<expense_id>, and DELETE /expenses/<expense_id> endpoints.
+
+(FRONTEND/CLIENT)
+* CLI/client will fetch pending expenses, let employee select expense id, and choose update/delete action.
+* Siri taking over client implementation for User Story 4.
+
+-----
+STEP 13 - CHECK
+Step 13: The Eraser Data Access Layer (expense_repository.py)
+Concept: Repository provides minimal SQL operations while service enforces business rules.
+
+Action: Add functions needed for the eraser flow:
+1. Fetch a single expense joined with approval status by expense id.
+2. Update only editable fields (amount, description) for a selected expense id.
+3. Delete selected expense and linked approval rows.
+-----
+STEP 14 - CHECK
+Step 14: The Eraser Business Logic Layer (expense_service.py)
+Concept: Service must guard all mutations with ownership and pending-status checks.
+
+Action: Build service methods that:
+1. Fetch pending expenses for the logged-in employee.
+2. Before update/delete, verify expense exists.
+3. Verify expense belongs to current user.
+4. Verify approval status is exactly pending.
+5. Only then call repository update/delete.
+-----
+STEP 15 - CHECK
+Step 15: The Backend Eraser API (expense_controller.py)
+Concept: API exposes protected edit/delete behavior for employee-only clients.
+
+Action: Add protected endpoints to:
+1. Return pending expenses for current user.
+2. Update selected pending expense amount/description.
+3. Delete selected pending expense.
+Map service validation errors to 400 responses and return success messages for client rendering.
+-----
+USER STORY 4 - THE ERASER - DONE
+ * Backend implementation in this app is complete (Steps 13-15).
+ * Client/CLI flow is owned by Siri.

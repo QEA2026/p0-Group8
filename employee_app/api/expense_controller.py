@@ -33,7 +33,8 @@ def submit_expense():
         # D. Success! Send the receipt back.
         return jsonify({
             "message": "Expense submitted successfully!",
-            "expense_id": new_expense.id
+            "expense_id": new_expense.id,
+            "amount": expense_service.format_currency_amount(new_expense.amount)
         }), 201
 
     except ValueError as e:
@@ -69,5 +70,83 @@ def get_ledger():
 
     except Exception as e:
         # Catch-all for unexpected failures
+        return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
+
+
+@expense_bp.route('/pending', methods=['GET'])
+@require_employee_auth
+def get_pending_expenses():
+    """Returns only pending expenses for the authenticated employee."""
+    # A. Identify the logged-in employee attached by the auth decorator
+    user = request.current_user
+
+    try:
+        # B. Resolve the live service from Flask app context
+        expense_service = current_app.expense_service
+
+        # C. Ask for pending-only rows used by edit/delete UI flows
+        pending_expenses = expense_service.get_pending_expenses(user.id)
+
+        # D. Return pending list payload to the client
+        return jsonify({"pending_expenses": pending_expenses}), 200
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+    except Exception as e:
+        return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
+
+
+@expense_bp.route('/<int:expense_id>', methods=['PUT'])
+@require_employee_auth
+def update_expense(expense_id: int):
+    """Updates an owned pending expense's amount and description."""
+    # A. Identify the logged-in employee attached by the auth decorator
+    user = request.current_user
+    # B. Read payload fields from request JSON
+    data = request.get_json() or {}
+
+    try:
+        # C. Resolve service and execute guarded update
+        expense_service = current_app.expense_service
+        expense_service.update_pending_expense(
+            user_id=user.id,
+            expense_id=expense_id,
+            amount=data.get('amount'),
+            description=data.get('description'),
+        )
+
+        # D. Return success response after update
+        return jsonify({"message": "Expense updated successfully."}), 200
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+    except Exception as e:
+        return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
+
+
+@expense_bp.route('/<int:expense_id>', methods=['DELETE'])
+@require_employee_auth
+def delete_expense(expense_id: int):
+    """Deletes an owned pending expense."""
+    # A. Identify the logged-in employee attached by the auth decorator
+    user = request.current_user
+
+    try:
+        # B. Resolve service and execute guarded delete
+        expense_service = current_app.expense_service
+        expense_service.delete_pending_expense(
+            user_id=user.id,
+            expense_id=expense_id,
+        )
+
+        # C. Return success response after delete
+        return jsonify({"message": "Expense deleted successfully."}), 200
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+    except Exception as e:
         return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
     

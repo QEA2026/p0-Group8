@@ -9,6 +9,7 @@ class ApprovalRepository:
         self.db = ConnectToDB(db_path)
 
     def find_by_expense_id(self, expense_id: int) -> Optional[Approval]:
+        """Retrieve a single approval by its expense ID which may or may not exist in the database. If it does not exist, return None."""
         with self.db.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT id, expenseId, status, reviewer, comment,review_date FROM approvals WHERE expenseId = ?", (expense_id,))
@@ -25,6 +26,7 @@ class ApprovalRepository:
         return None
     
     def find_expenses_with_status_for_user(self, user_id: int, status: str) -> List[tuple]:
+        """Retrieve all expenses for a specific user with a given approval status. Returns a list of tuples containing Expense and Approval objects."""
         with self.db.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(

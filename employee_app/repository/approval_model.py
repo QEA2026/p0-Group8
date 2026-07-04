@@ -5,6 +5,7 @@ from typing import Optional
 
 @dataclass
 class Approval:
+    """Represents an approval record in the system."""
     id: Optional[int] = None
     expense_id: int
     status: str  # e.g., "Pending", "Approved", "Rejected"

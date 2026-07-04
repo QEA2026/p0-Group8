@@ -40,7 +40,14 @@ class ExpenseService:
         if parsed_amount.as_tuple().exponent < -2:
             raise ValueError("Expense amount must have at most 2 decimal places.")
 
-        return parsed_amount
+        # Normalize accepted amounts to two decimal places (e.g., 46 -> 46.00)
+        return parsed_amount.quantize(Decimal("0.01"))
+
+    @staticmethod
+    def format_currency_amount(amount) -> str:
+        """Return money as a 2-decimal string for stable API responses."""
+        normalized_amount = ExpenseService._parse_currency_amount(amount)
+        return f"{normalized_amount:.2f}"
     
     def create_expense(self, user_id: int, amount: float, description: str, category: str, expense_date: str) -> Expense: 
         """ Validates input, checks date format, and saves the new expense. """
@@ -110,15 +117,70 @@ class ExpenseService:
             "expense_history": expense_history,
         }
 
+    def get_pending_expenses(self, user_id: int) -> List[dict]:
+        """Returns only pending expenses for the logged-in employee."""
+        ledger_rows = self.expense_repo.get_expenses_by_user(user_id)
+        pending_expenses: List[dict] = []
+
+        for entry in ledger_rows:
+            normalized_status = (entry.status or "").strip().lower()
+            if normalized_status == "pending":
+                pending_expenses.append(self._serialize_ledger_entry(entry))
+
+        return pending_expenses
+
+    def update_pending_expense(self, user_id: int, expense_id: int, amount, description: str) -> None:
+        """Updates amount/description only when expense is owned by user and still pending."""
+        # 1. Validate the requested field values first
+        clean_amount = self._parse_currency_amount(amount)
+        if not description or not description.strip():
+            raise ValueError("A desciption is required for the expense.")
+
+        # 2. Pull the current expense+status snapshot and enforce authorization rules
+        expense_row = self.expense_repo.find_expense_with_status(expense_id)
+        if not expense_row:
+            raise ValueError("Expense not found.")
+        if expense_row.user_id != user_id:
+            raise ValueError("You can only edit your own expenses.")
+
+        normalized_status = (expense_row.status or "").strip().lower()
+        if normalized_status != "pending":
+            raise ValueError("Only pending expenses can be edited.")
+
+        # 3. Persist the allowed mutation
+        updated = self.expense_repo.update_expense(
+            expense_id=expense_id,
+            amount=float(clean_amount),
+            description=description.strip(),
+        )
+        if not updated:
+            raise ValueError("Expense update failed.")
+
+    def delete_pending_expense(self, user_id: int, expense_id: int) -> None:
+        """Deletes an expense only when it is owned by user and still pending."""
+        # 1. Pull the current expense+status snapshot and enforce authorization rules
+        expense_row = self.expense_repo.find_expense_with_status(expense_id)
+        if not expense_row:
+            raise ValueError("Expense not found.")
+        if expense_row.user_id != user_id:
+            raise ValueError("You can only delete your own expenses.")
+
+        normalized_status = (expense_row.status or "").strip().lower()
+        if normalized_status != "pending":
+            raise ValueError("Only pending expenses can be deleted.")
+
+        # 2. Delete the expense and linked approval row
+        deleted = self.expense_repo.delete_expense(expense_id)
+        if not deleted:
+            raise ValueError("Expense delete failed.")
+
     def _serialize_ledger_entry(self, entry: LedgerEntry) -> dict:
         """Convert a LedgerEntry read model into a JSON-safe dictionary."""
-        amount_decimal = self._parse_currency_amount(entry.amount)
-
         # Keep key names explicit and stable for downstream CLI/client rendering
         return {
             "expense_id": entry.expense_id,
             "user_id": entry.user_id,
-            "amount": f"{amount_decimal:.2f}",
+            "amount": self.format_currency_amount(entry.amount),
             "description": entry.description,
             "category": entry.category,
             "expense_date": entry.expense_date,
