@@ -26,3 +26,6 @@ __pycache__/
 *.jar
 *.war
 *.ear
+
+# Python venv
+.venv/

@@ -4,6 +4,7 @@ from typing import Optional
 
 @dataclass
 class User:
+    """Represents a user in the system, either an employee or a manager."""
     id: Optional[int] = None
     username: str = ""
     password: str = ""

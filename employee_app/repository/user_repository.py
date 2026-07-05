@@ -8,6 +8,7 @@ class UserRepository:
         self.db = ConnectToDB(db_path)
     
     def find_by_username(self, username: str) -> Optional[User]:
+        """Retrieve a single user by their username. Returns None if the user does not exist."""
         with self.db.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT id, username, password, role FROM users WHERE username = ?", (username,))
@@ -15,18 +16,19 @@ class UserRepository:
             if row:
                 return User(id=row["id"], username=row["username"], password=row["password"], role=row["role"])
             return None
-        
-    def find_by_id(self, user_id: int) -> Optional[User]:
-        with self.db.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT id, username, password, role FROM users WHERE id = ?", (user_id,))
-            row = cursor.fetchone()
-            if row:
-                return User(id=row["id"], username=row["username"], password=row["password"], role=row["role"])
-            return None
+    
+    """ Legacy method, kept for reference, but not currently used in the application. """
+    # def find_by_id(self, user_id: int) -> Optional[User]:
+    #     with self.db.get_connection() as conn:
+    #         cursor = conn.cursor()
+    #         cursor.execute("SELECT id, username, password, role FROM users WHERE id = ?", (user_id,))
+    #         row = cursor.fetchone()
+    #         if row:
+    #             return User(id=row["id"], username=row["username"], password=row["password"], role=row["role"])
+    #         return None
         
     def create_user(self, user: User) -> User:
-        # Inserts a new user into the database and returns the user with their new ID.
+        """Inserts a new user into the database and returns the user with their new ID."""
         with self.db.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(

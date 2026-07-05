@@ -5,6 +5,7 @@ from typing import Optional
 
 @dataclass
 class Expense:
+    """Represents an expense record in the system."""
     user_id: int
     amount: float 
     description: str
