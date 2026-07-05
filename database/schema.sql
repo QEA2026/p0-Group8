@@ -1,10 +1,3 @@
-/* 
-schema.sql contains the users table, expenses table, and approvals table
-
-the way I thought about it is that a user will submit an expense right and then 
-recieved by approvals so thats how the relationships work
-*/
-
 DROP TABLE IF EXISTS approvals;
 DROP TABLE IF EXISTS expenses;
 DROP TABLE IF EXISTS users;
@@ -21,14 +14,25 @@ CREATE TABLE expenses (
     userId INTEGER NOT NULL,
     amount REAL NOT NULL,
     description TEXT NOT NULL,
-    category TEXT NOT NULL,
+    category TEXT NOT NULL CHECK (
+        category IN (
+            'TRAVEL',
+            'MEALS',
+            'LODGING',
+            'OFFICE_SUPPLIES',
+            'EQUIPMENT',
+            'SOFTWARE',
+            'TRAINING',
+            'OTHER'
+        )
+    ),
     date TEXT NOT NULL,
     FOREIGN KEY (userId) REFERENCES users(id)
 );
 
 CREATE TABLE approvals (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    expenseId INTEGER NOT NULL,
+    expenseId INTEGER NOT NULL UNIQUE,
     status TEXT NOT NULL, -- pending, approved or denied?
     reviewer INTEGER,
     comment TEXT,
