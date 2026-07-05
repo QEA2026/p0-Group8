@@ -23,7 +23,13 @@ Thumbs.db
 .env
 **/.env
 
+# Python cache
+__pycache__/
+
 # Generated package archives
 *.jar
 *.war
 *.ear
+
+# Python venv
+.venv/
