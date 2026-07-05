@@ -12,15 +12,15 @@ import com.revature.expensemanager.dao.JdbcUserDAO;
 import com.revature.expensemanager.dao.ReportDAO;
 import com.revature.expensemanager.dao.UserDAO;
 import com.revature.expensemanager.dto.ErrorResponse;
+import com.revature.expensemanager.middleware.AuthMiddleware;
 import com.revature.expensemanager.service.AuthService;
 import com.revature.expensemanager.service.ExpenseService;
+import com.revature.expensemanager.service.JwtService;
 import com.revature.expensemanager.service.ReportExportService;
 import com.revature.expensemanager.service.ReportService;
 
 import io.javalin.Javalin;
-import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import jakarta.servlet.http.HttpSession;
 
 public class Main {
 
@@ -34,16 +34,19 @@ public class Main {
         ExpenseService expenseService = new ExpenseService(expenseDAO, approvalDAO);
         ReportService reportService = new ReportService(reportDAO, userDAO);
         ReportExportService reportExportService = new ReportExportService();
+        JwtService jwtService = new JwtService();
 
-        AuthController authController = new AuthController(authService);
+        AuthMiddleware authMiddleware = new AuthMiddleware(jwtService);
+
+        AuthController authController = new AuthController(authService, jwtService);
         ExpenseController expenseController = new ExpenseController(expenseService);
         ReportController reportController = new ReportController(reportService, reportExportService);
 
         Javalin app = Javalin.create(config -> {
             config.routes.post("/login", authController::login);
 
-            config.routes.before("/expenses/*", Main::requireManager);
-            config.routes.before("/reports/*", Main::requireManager);
+            config.routes.before("/expenses/*", authMiddleware::requireManager);
+            config.routes.before("/reports/*", authMiddleware::requireManager);
 
             config.routes.get("/expenses/pending", expenseController::getPendingExpenses);
             config.routes.put("/expenses/{id}/review", expenseController::reviewExpense);
@@ -60,16 +63,5 @@ public class Main {
         });
 
         app.start(7000);
-    }
-
-    private static void requireManager(Context ctx) {
-        HttpSession session = ctx.req().getSession(false);
-
-        if (session == null) {
-            ctx.status(HttpStatus.UNAUTHORIZED)
-                    .json(new ErrorResponse("Login required."));
-            ctx.skipRemainingHandlers();
-            return;
-        }
     }
 }

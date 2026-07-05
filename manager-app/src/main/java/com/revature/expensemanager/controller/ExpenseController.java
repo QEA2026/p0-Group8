@@ -2,7 +2,6 @@ package com.revature.expensemanager.controller;
 
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
 
@@ -25,8 +24,6 @@ public class ExpenseController {
     }
 
     public void reviewExpense(Context ctx) {
-        HttpSession session = ctx.req().getSession(false);
-
         int expenseId;
 
         try {
@@ -39,7 +36,7 @@ public class ExpenseController {
 
         ApprovalRequest approvalRequest = ctx.bodyAsClass(ApprovalRequest.class);
 
-        int reviewerId = (int) session.getAttribute("userId");
+        Integer reviewerId = ctx.attribute("userId");
 
         boolean reviewed = expenseService.reviewExpense(expenseId, reviewerId, approvalRequest);
 
