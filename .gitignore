@@ -29,3 +29,4 @@ __pycache__/
 
 # Python venv
 .venv/
+employee_app/venv/
