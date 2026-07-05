@@ -17,15 +17,16 @@ class UserRepository:
                 return User(id=row["id"], username=row["username"], password=row["password"], role=row["role"])
             return None
     
-    """ Legacy method, kept for reference, but not currently used in the application. """
-    # def find_by_id(self, user_id: int) -> Optional[User]:
-    #     with self.db.get_connection() as conn:
-    #         cursor = conn.cursor()
-    #         cursor.execute("SELECT id, username, password, role FROM users WHERE id = ?", (user_id,))
-    #         row = cursor.fetchone()
-    #         if row:
-    #             return User(id=row["id"], username=row["username"], password=row["password"], role=row["role"])
-    #         return None
+    
+    def find_by_id(self, user_id: int) -> Optional[User]:
+        """Retrieve a single user by their ID. Returns None if the user does not exist."""
+        with self.db.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, username, password, role FROM users WHERE id = ?", (user_id,))
+            row = cursor.fetchone()
+            if row:
+                return User(id=row["id"], username=row["username"], password=row["password"], role=row["role"])
+            return None
         
     def create_user(self, user: User) -> User:
         """Inserts a new user into the database and returns the user with their new ID."""
