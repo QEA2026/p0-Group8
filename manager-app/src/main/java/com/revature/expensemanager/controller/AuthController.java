@@ -28,12 +28,14 @@ public class AuthController {
     public void login(Context ctx) {
         LoginRequest loginRequest = ctx.bodyAsClass(LoginRequest.class);
 
-        logger.info("Login request received for username={}", loginRequest.getUsername());
+        String username = loginRequest != null ? loginRequest.getUsername() : null;
+
+        logger.info("Login request received for username={}", username);
 
         Optional<LoginResponse> loginResponse = authService.login(loginRequest);
 
         if (loginResponse.isEmpty()) {
-            logger.warn("Login failed for username={}", loginRequest.getUsername());
+            logger.warn("Login failed for username={}", username);
 
             ctx.status(HttpStatus.UNAUTHORIZED)
                     .json(new ErrorResponse(

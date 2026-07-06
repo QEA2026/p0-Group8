@@ -45,9 +45,9 @@ public class AuthMiddleware {
 
         try {
             DecodedJWT decodedJWT = jwtService.validateToken(token);
-            Integer userId = decodedJWT.getClaim("userId").asInt();
-            String username = decodedJWT.getClaim("username").asString();
-            String role = decodedJWT.getClaim("role").asString();
+            Integer userId = jwtService.getUserId(decodedJWT);
+            String username = jwtService.getUsername(decodedJWT);
+            String role = jwtService.getRole(decodedJWT);
 
             if (userId == null || username == null || username.isBlank()
                     || role == null || role.isBlank()) {
