@@ -2,7 +2,7 @@ package com.revature.expensemanager.service;
 
 import java.util.Optional;
 
-import org.mindrot.jbcrypt.BCrypt;
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,8 @@ public class AuthService {
         logger.info("Authenticating manager login for username={}", username);
 
         Optional<LoginResponse> response = userDAO.findByUsername(username)
-                .filter(user -> BCrypt.checkpw(password, user.getPassword()))
+                .filter(user -> BCrypt.verifyer()
+                        .verify(password.toCharArray(), user.getPassword()).verified)
                 .filter(user -> user.getRole().equalsIgnoreCase("manager"))
                 .map(user -> new LoginResponse(
                         user.getId(),
