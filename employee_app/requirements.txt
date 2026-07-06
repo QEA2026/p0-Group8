@@ -1,5 +1,0 @@
-Flask
-PyJWT
-bcrypt
-pytest
-pytest-mock
