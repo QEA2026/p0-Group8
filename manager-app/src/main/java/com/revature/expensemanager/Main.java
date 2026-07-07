@@ -57,6 +57,7 @@ public class Main {
             config.routes.get("/reports/employee", reportController::getExpensesByEmployee);
             config.routes.get("/reports/category", reportController::getExpensesByCategory);
             config.routes.get("/reports/date", reportController::getExpensesByDateRange);
+            config.routes.get("/employees", reportController::getEmployees);    
 
             config.routes.exception(RuntimeException.class, (e, ctx) -> {
                 e.printStackTrace();
@@ -65,6 +66,6 @@ public class Main {
             });
         });
 
-        app.start(7000);
+        app.start(7001);
     }
 }
