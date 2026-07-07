@@ -1,10 +1,7 @@
 package com.revature.expensemanager.cli;
 
-//import java.util.Scanner;
 
 public class MainCLI {
-
-    //private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
     System.out.println("=== Manager Expense CLI ===");
@@ -35,15 +32,12 @@ public class MainCLI {
 
     case 4:
         Session.logout();
-
-        while (!AuthCLI.login()) {
-            System.out.println("\nPlease try again.");
-        }
+        System.exit(10);
 
         break;
 
     case 0:
-        System.out.println("Exiting CLI...");
+        System.exit(0); 
         return;
 
     default:
@@ -60,6 +54,5 @@ public class MainCLI {
     System.out.println("3. Reports");
     System.out.println("4. Logout");
     System.out.println("0. Exit");
-    //System.out.print("Choose an option: ");
     }
 }

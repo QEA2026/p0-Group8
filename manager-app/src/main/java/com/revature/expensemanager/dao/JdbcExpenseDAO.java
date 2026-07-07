@@ -45,7 +45,7 @@ public class JdbcExpenseDAO implements ExpenseDAO {
                 SELECT e.id, e.userId, e.amount, e.description, e.category, e.date
                 FROM expenses e
                 JOIN approvals a ON e.id = a.expenseId
-                WHERE a.status = 'pending'
+                WHERE LOWER(a.status) = 'pending'
                 """;
 
         List<Expense> expenses = new ArrayList<>();

@@ -10,7 +10,6 @@ public class ApiClient {
 
     public static String get(String endpoint) {
         try {
-            // URL url = new URL(BASE_URL + endpoint);
             URL url = java.net.URI.create(BASE_URL + endpoint).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -32,7 +31,6 @@ public class ApiClient {
 
     public static String post(String endpoint, String jsonBody) {
         try {
-            // URL url = new URL(BASE_URL + endpoint);
             URL url = java.net.URI.create(BASE_URL + endpoint).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -61,7 +59,6 @@ public class ApiClient {
 
     public static String put(String endpoint, String jsonBody) {
     try {
-        // URL url = new URL(BASE_URL + endpoint);
         URL url = java.net.URI.create(BASE_URL + endpoint).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 

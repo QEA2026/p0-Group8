@@ -46,7 +46,7 @@ public class JdbcApprovalDAO implements ApprovalDAO {
                     comment = ?,
                     review_date = ?
                 WHERE expenseId = ?
-                  AND status = 'pending'
+                    AND LOWER(status) = 'pending'
                 """;
         try (Connection conn = DatabaseConfig.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {

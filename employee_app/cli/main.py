@@ -122,17 +122,18 @@ def main():
             print(response.json())
         #logout
         elif choice == "6":
-            logout()
+            #logout()
             print("Logged out.")
-            break
+            return 1
+            # break
 
         elif choice == "0":
             print("Exiting...")
-            break
+            return 0
 
         else:
             print("Invalid option")
 
 
 if __name__ == "__main__":
-    main()
+    exit(main())

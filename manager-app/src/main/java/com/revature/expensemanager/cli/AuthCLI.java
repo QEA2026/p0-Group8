@@ -1,22 +1,14 @@
 package com.revature.expensemanager.cli;
 
-//import java.util.Scanner;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.expensemanager.dto.LoginResponse;
 
 public class AuthCLI {
 
-    //private static final Scanner scanner = new Scanner(System.in);
 
     public static boolean login() {
         System.out.println("\n--- Login ---");
-
-        // System.out.print("Username: ");
-        // String username = scanner.nextLine();
-
-        // System.out.print("Password: ");
-        // String password = scanner.nextLine();
+  
         String username = InputVal.readNonEmptyString("Username: ");
         String password = InputVal.readNonEmptyString("Password: "); 
 

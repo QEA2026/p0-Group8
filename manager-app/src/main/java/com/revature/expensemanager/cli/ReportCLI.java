@@ -7,12 +7,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 import java.util.Map;
 
-//mport java.util.Scanner;
-
 public class ReportCLI {
 
     private static final ObjectMapper mapper = new ObjectMapper();
-    // private static final Scanner scanner = new Scanner(System.in);
 
     public static void runReports() {
 
@@ -47,35 +44,28 @@ public class ReportCLI {
     }
 
     private static void byEmployee() {
-        // System.out.print("User ID: ");
-        // String id = scanner.nextLine();
-        // System.out.println("\nEmployees");
-
-        // String employees = ApiClient.get("/employees");
-
-        // System.out.println(employees);
 
         System.out.println("\n=========================");
-System.out.println(" Available Employees");
-System.out.println("=========================");
+        System.out.println(" Available Employees");
+        System.out.println("=========================");
 
-String employees = ApiClient.get("/employees");
+        String employees = ApiClient.get("/employees");
 
-try {
-    List<Map<String, Object>> employeeList = mapper.readValue(
-            employees,
-            new TypeReference<List<Map<String, Object>>>() {
-            });
+        try {
+            List<Map<String, Object>> employeeList = mapper.readValue(
+                    employees,
+                    new TypeReference<List<Map<String, Object>>>() {
+                    });
 
-    for (Map<String, Object> employee : employeeList) {
-        System.out.printf("%-3s %s%n",
-                employee.get("id"),
-                employee.get("username"));
-    }
+            for (Map<String, Object> employee : employeeList) {
+                System.out.printf("%-3s %s%n",
+                        employee.get("id"),
+                        employee.get("username"));
+            }
 
-} catch (Exception e) {
-    System.out.println(employees);
-}
+        } catch (Exception e) {
+            System.out.println(employees);
+        }
 
         int id = InputVal.readPositiveInt("Employee ID: ");
 
