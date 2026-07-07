@@ -61,7 +61,7 @@ import com.revature.expensemanager.model.Expense;
 public class ExpenseCLI {
 
     public static void viewPendingExpenses() {
-    System.out.println("\n--- Pending Expenses ---");
+    //System.out.println("\n--- Pending Expenses ---");
 
     try {
         String response = ApiClient.get("/expenses/pending");

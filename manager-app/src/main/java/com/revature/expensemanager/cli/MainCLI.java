@@ -17,7 +17,7 @@ public class MainCLI {
         printMenu();
 
         //String choice = scanner.nextLine();
-        int choice = InputVal.readMenuChoice(0,3);
+        int choice = InputVal.readMenuChoice(0,4);
 
         switch (choice) {
     case 1:
@@ -39,6 +39,7 @@ public class MainCLI {
         while (!AuthCLI.login()) {
             System.out.println("\nPlease try again.");
         }
+
         break;
 
     case 0:
@@ -59,6 +60,6 @@ public class MainCLI {
     System.out.println("3. Reports");
     System.out.println("4. Logout");
     System.out.println("0. Exit");
-    System.out.print("Choose an option: ");
+    //System.out.print("Choose an option: ");
     }
 }

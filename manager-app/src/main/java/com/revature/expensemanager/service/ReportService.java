@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.revature.expensemanager.dao.ReportDAO;
 import com.revature.expensemanager.dao.UserDAO;
+import com.revature.expensemanager.dto.EmployeeSummary;
 import com.revature.expensemanager.model.Expense;
 
 public class ReportService {
@@ -29,7 +30,11 @@ public class ReportService {
 
     public boolean employeeExists(int userId) {
         return userDAO.findById(userId)
-                .filter(user -> "employee".equals(user.getRole()))
+                .filter(user -> "employee".equalsIgnoreCase(user.getRole()))
                 .isPresent();
     }
+
+    public List<EmployeeSummary> getEmployees() {
+    return userDAO.getEmployees();
+}
 }
