@@ -2,7 +2,10 @@ package com.revature.expensemanager.cli;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class ApiClient {
 
@@ -107,4 +110,33 @@ public class ApiClient {
     br.close();
     return response.toString();
     }
+
+    public static String getWithHeaders(String endpoint) {
+
+    try {
+        URL url = URI.create(BASE_URL + endpoint).toURL();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        if (Session.isLoggedIn()) {
+            conn.setRequestProperty(
+                    "Authorization",
+                    "Bearer " + Session.getToken()
+            );
+        }
+
+        conn.setRequestMethod("GET");
+
+        String reportFile = conn.getHeaderField("Report-File");
+
+        if (reportFile != null) {
+            System.out.println("\nCSV Report Created:");
+            System.out.println(reportFile);
+        }
+
+        return readResponse(conn);
+
+    } catch (Exception e) {
+        return "ERROR: " + e.getMessage();
+    }
+}
 }

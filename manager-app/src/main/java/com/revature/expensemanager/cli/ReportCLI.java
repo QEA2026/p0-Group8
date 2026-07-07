@@ -68,10 +68,15 @@ public class ReportCLI {
         }
 
         int id = InputVal.readPositiveInt("Employee ID: ");
+        String endpoint = "/reports/employee?userId=" + id;
 
         String response = ApiClient.get("/reports/employee?userId=" + id);
 
-        printExpenseResponse(response);
+        boolean hasData = printExpenseResponse(response);
+
+if (hasData) {
+    exportReport(endpoint);
+}
     }
 
     private static void byCategory() {
@@ -126,7 +131,15 @@ public class ReportCLI {
 
         String response = ApiClient.get("/reports/category?category=" + category);
 
-        printExpenseResponse(response);
+        boolean hasData = printExpenseResponse(response);
+
+if (hasData) {
+    exportReport("/reports/category?category=" + category);
+}
+
+//         exportReport(
+//      "/reports/category?category=" + category
+// );
     }
 
     private static void byDate() {
@@ -144,37 +157,73 @@ public class ReportCLI {
                     "End Date (YYYY-MM-DD): ");
         }
 
+        String endpoint =
+        "/reports/date?startDate=" + start +
+        "&endDate=" + end;
         String response = ApiClient.get(
                 "/reports/date?startDate=" + start +
                         "&endDate=" + end);
 
-        printExpenseResponse(response);
+        boolean hasData = printExpenseResponse(response);
+
+if (hasData) {
+    exportReport(endpoint);
+}
     }
 
-    private static void printExpenseResponse(String response) {
+    private static boolean printExpenseResponse(String response) {
 
-        if (response == null || response.isBlank()) {
-            System.out.println("No data found.");
-            return;
-        }
+    if (response == null || response.isBlank()) {
+        System.out.println("No data found.");
+        return false;
+    }
 
-        try {
-            if (response.startsWith("{")) {
+    try {
 
-                class ErrorResponse {
-                    public String message;
-                }
+        if (response.startsWith("{")) {
 
-                ErrorResponse error = mapper.readValue(response, ErrorResponse.class);
-
-                System.out.println("\nError: " + error.message);
-                return;
+            class ErrorResponse {
+                public String message;
             }
-            Expense[] expenses = mapper.readValue(response, Expense[].class);
-            ExpensePrinter.printList("Report Result", expenses);
 
-        } catch (Exception e) {
-            System.out.println(response);
+            ErrorResponse error = mapper.readValue(response, ErrorResponse.class);
+
+            System.out.println("\nError: " + error.message);
+            return false;
         }
+
+        Expense[] expenses = mapper.readValue(response, Expense[].class);
+
+        if (expenses.length == 0) {
+            System.out.println("No expenses found.");
+            return false;
+        }
+
+        ExpensePrinter.printList("Report Result", expenses);
+
+        return true;
+
+    } catch (Exception e) {
+        System.out.println(response);
+        return false;
     }
+}
+
+    private static void exportReport(String endpoint) {
+
+    System.out.println("\nWould you like to export this report as CSV?");
+    System.out.println("1. Yes");
+    System.out.println("0. No");
+
+    int choice = InputVal.readMenuChoice(0, 1);
+
+    if (choice == 1) {
+
+        String exportEndpoint = endpoint + "&export=true";
+
+        ApiClient.getWithHeaders(exportEndpoint);
+
+        System.out.println("CSV export completed.");
+    }
+}
 }
