@@ -1,3 +1,4 @@
+# 5 Authentication service unit tests: 2 Positive and 3 Negative
 import bcrypt
 import pytest
 

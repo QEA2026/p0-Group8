@@ -1,3 +1,4 @@
+# 7 Expense service unit tests: 4 Positive and 3 Negative
 import pytest
 
 from repository.expense_model import Expense

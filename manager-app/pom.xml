@@ -90,19 +90,28 @@
             <version>4.5.2</version>
         </dependency>
 
-        <!-- Unit testing -->
+        <!-- Unit testing (3) -->
+
+        <!-- JUnit Jupiter -->
+        <!-- Source: https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter/5.10.2 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Mockito Core -->
+        <!-- Source: https://mvnrepository.com/artifact/org.mockito/mockito-core/5.12.0 -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>5.12.0</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Mockito JUnit Jupiter Extension -->
+        <!-- Source: https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter/5.12.0 -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>

@@ -1,3 +1,4 @@
+// 2 Authentication service tests: 1 Positive and 1 Negative
 package com.revature.expensemanager.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
