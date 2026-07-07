@@ -1,5 +1,6 @@
 package com.revature.expensemanager;
 
+import com.revature.expensemanager.config.AppConfig;
 import com.revature.expensemanager.controller.AuthController;
 import com.revature.expensemanager.controller.ExpenseController;
 import com.revature.expensemanager.controller.ReportController;
@@ -25,6 +26,8 @@ import io.javalin.http.HttpStatus;
 public class Main {
 
     public static void main(String[] args) {
+        AppConfig appConfig = new AppConfig();
+
         UserDAO userDAO = new JdbcUserDAO();
         ExpenseDAO expenseDAO = new JdbcExpenseDAO();
         ApprovalDAO approvalDAO = new JdbcApprovalDAO();
@@ -34,7 +37,7 @@ public class Main {
         ExpenseService expenseService = new ExpenseService(expenseDAO, approvalDAO);
         ReportService reportService = new ReportService(reportDAO, userDAO);
         ReportExportService reportExportService = new ReportExportService();
-        JwtService jwtService = new JwtService();
+        JwtService jwtService = new JwtService(appConfig.getJwtSecret(), appConfig.getJwtExpirationHours());
 
         AuthMiddleware authMiddleware = new AuthMiddleware(jwtService);
 
@@ -54,6 +57,7 @@ public class Main {
             config.routes.get("/reports/employee", reportController::getExpensesByEmployee);
             config.routes.get("/reports/category", reportController::getExpensesByCategory);
             config.routes.get("/reports/date", reportController::getExpensesByDateRange);
+            config.routes.get("/employees", reportController::getEmployees);    
 
             config.routes.exception(RuntimeException.class, (e, ctx) -> {
                 e.printStackTrace();
@@ -62,6 +66,6 @@ public class Main {
             });
         });
 
-        app.start(7000);
+        app.start(7001);
     }
 }

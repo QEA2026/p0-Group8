@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+import com.revature.expensemanager.dto.EmployeeSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,6 +157,14 @@ public class ReportController {
         exportIfRequested(ctx, expenses, "date_report", managerId);
         ctx.status(HttpStatus.OK).json(expenses);
     }
+
+    public void getEmployees(Context ctx) {
+
+    List<EmployeeSummary> employees =
+            reportService.getEmployees();
+
+    ctx.json(employees);
+}
 
     private void exportIfRequested(Context ctx, List<Expense> expenses, String reportName, Integer managerId) {
         String exportParam = ctx.queryParam("export");

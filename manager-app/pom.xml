@@ -92,7 +92,7 @@
             <artifactId>jackson-dataformat-csv</artifactId>
             <version>2.22.0</version>
         </dependency>
-        
+
         <!-- Password hashing -->
         <!-- Source: https://mvnrepository.com/artifact/at.favre.lib/bcrypt -->
         <dependency>
@@ -108,7 +108,6 @@
             <artifactId>java-jwt</artifactId>
             <version>4.5.2</version>
         </dependency>
-
         <!-- Unit testing (3) -->
 
         <!-- JUnit Jupiter -->
@@ -136,6 +135,14 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>5.12.0</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Load environment variables from a .env file -->
+        <!-- Source: https://mvnrepository.com/artifact/io.github.cdimascio/dotenv-java -->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+            <version>3.2.0</version>
         </dependency>
         
     </dependencies>
