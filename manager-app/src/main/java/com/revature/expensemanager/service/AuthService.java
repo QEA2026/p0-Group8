@@ -29,11 +29,47 @@ public class AuthService {
         }
 
         return userDAO.findByUsername(username)
-                .filter(user -> BCrypt.checkpw(password, user.getPassword()))
+                .filter(user -> {
+                    String storedHash = user.getPassword();
+
+                    if (storedHash == null || storedHash.isBlank()) {
+                        return false;
+                    }
+
+                    try {
+                        return BCrypt.checkpw(password, storedHash.trim());
+                    } catch (Exception e) {
+                        System.out.println("BCrypt error for user: " + username);
+                        e.printStackTrace();
+                        return false;
+                    }
+                })
                 .filter(user -> user.getRole().equalsIgnoreCase("manager"))
                 .map(user -> new LoginResponse(
                         user.getId(),
                         user.getUsername(),
                         user.getRole()));
     }
+
+    // public Optional<LoginResponse> login(LoginRequest loginRequest) {
+    // if (loginRequest == null) {
+    // return Optional.empty();
+    // }
+
+    // String username = loginRequest.getUsername();
+    // String password = loginRequest.getPassword();
+
+    // if (username == null || username.isBlank()
+    // || password == null || password.isBlank()) {
+    // return Optional.empty();
+    // }
+
+    // return userDAO.findByUsername(username)
+    // .filter(user -> BCrypt.checkpw(password, user.getPassword()))
+    // .filter(user -> user.getRole().equalsIgnoreCase("manager"))
+    // .map(user -> new LoginResponse(
+    // user.getId(),
+    // user.getUsername(),
+    // user.getRole()));
+    // }
 }
