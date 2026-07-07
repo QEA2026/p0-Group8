@@ -1,5 +1,6 @@
 package com.revature.expensemanager;
 
+import com.revature.expensemanager.config.AppConfig;
 import com.revature.expensemanager.controller.AuthController;
 import com.revature.expensemanager.controller.ExpenseController;
 import com.revature.expensemanager.controller.ReportController;
@@ -25,6 +26,8 @@ import io.javalin.http.HttpStatus;
 public class Main {
 
     public static void main(String[] args) {
+        AppConfig appConfig = new AppConfig();
+
         UserDAO userDAO = new JdbcUserDAO();
         ExpenseDAO expenseDAO = new JdbcExpenseDAO();
         ApprovalDAO approvalDAO = new JdbcApprovalDAO();
@@ -34,7 +37,7 @@ public class Main {
         ExpenseService expenseService = new ExpenseService(expenseDAO, approvalDAO);
         ReportService reportService = new ReportService(reportDAO, userDAO);
         ReportExportService reportExportService = new ReportExportService();
-        JwtService jwtService = new JwtService();
+        JwtService jwtService = new JwtService(appConfig.getJwtSecret(), appConfig.getJwtExpirationHours());
 
         AuthMiddleware authMiddleware = new AuthMiddleware(jwtService);
 

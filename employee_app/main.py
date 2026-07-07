@@ -1,22 +1,28 @@
-from flask import Flask
+
 from api.auth_controller import auth_bp
 from api.expense_controller import expense_bp
-from repository.user_repository import UserRepository
+from config.app_config import AppConfig
+from flask import Flask
 from repository.expense_repository import ExpenseRepository
+from repository.user_repository import UserRepository
 from service.authentication_service import AuthenticationService
 from service.expense_service import ExpenseService
+
+config = AppConfig()
 
 # 1. Initialize the Flask Application
 app = Flask(__name__)
 
-#2. Set up the dependency injection for the UserRepository and AuthenticationService
+# 2. Set up the dependency injection for the UserRepository and AuthenticationService
 # Create the database repository object
 user_repo = UserRepository()
 
-# Then pass the repository into the service, along with a secret key for JWTs
-# (TODO: Hide this secret key in a .env file)
-jwt_secret = "super_secret_development_key_123!"
-auth_service = AuthenticationService(user_repository=user_repo, jwt_secret=jwt_secret)
+# Pass the repository, JWT secret, and JWT expiration to auth service
+auth_service = AuthenticationService(
+    user_repository=user_repo,
+    jwt_secret=config.jwt_secret,
+    token_expiration_hours=config.jwt_expiration_hours
+)
 
 # Similarly, set up the dependency injection for the ExpenseRepository and ExpenseService
 expense_repo = ExpenseRepository()
@@ -33,6 +39,6 @@ app.register_blueprint(expense_bp)
 
 
 # 5. Turn the server on!
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("🚀 Starting the Employee Portal Backend on http://127.0.0.1:5000")
     app.run(port=5000, debug=True)

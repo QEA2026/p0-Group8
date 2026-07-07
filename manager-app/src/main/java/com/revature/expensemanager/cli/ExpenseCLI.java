@@ -42,7 +42,7 @@ public class ExpenseCLI {
 
         switch (choice) {
             case 1 -> status = "APPROVED";
-            case 2 -> status = "REJECTED";
+            case 2 -> status = "DENIED";
             default -> {
                 System.out.println("Cancelled.");
                 return;

@@ -1,26 +1,29 @@
 # Authentication service for handling user authentication and JWT token generation
+from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, Optional
+
+import bcrypt
+import jwt
 from repository.user_model import User
 from repository.user_repository import UserRepository
-import jwt
-import os
-import bcrypt
-from datetime import datetime, timedelta, timezone
-from typing import Optional, Dict, Any
-
 
 
 class AuthenticationService:
-    def __init__(self, user_repository: UserRepository, jwt_secret: str, jwt_algorithm: str = "HS256"):
+    def __init__(
+        self,
+        user_repository: UserRepository,
+        jwt_secret: str,
+        token_expiration_hours: int,
+        jwt_algorithm: str = "HS256"
+    ):
         self.user_repository = user_repository
-        # Best Practice: Pull secret key from environment variables, fallback to default for dev
-        self.jwt_secret = jwt_secret or os.environ.get("JWT_SECRET", 'dev-secret-key')
+        self.jwt_secret = jwt_secret
         self.jwt_algorithm = jwt_algorithm
-        try:
-            hours_config = int(os.environ.get("TOKEN_EXPIRY_HOURS", 24))
-        except (TypeError, ValueError):
-            hours_config = 24
-        self.token_expiry_hours = hours_config
-        self.token_expiry = timedelta(hours=hours_config)
+
+        if token_expiration_hours <= 0:
+            raise ValueError("JWT_EXPIRATION_HOURS must be greater than zero.")
+
+        self.token_expiry = timedelta(hours=token_expiration_hours)
 
     # Registers a new user by hashing their password and saving to the database (used by seed.sql dynamic seeding).
     def register_user(self, username: str, raw_password: str, role: str) -> User:
@@ -51,14 +54,15 @@ class AuthenticationService:
             'username': user.username,
             'role': user.role,
             'exp': now + self.token_expiry,
-            'iat': now
+            'iat': now,
+            'iss': 'revature-expense-manager-employee-app'
         }
         return jwt.encode(payload, self.jwt_secret, algorithm=self.jwt_algorithm)
     
     # Verifies a JWT token and returns the payload if valid
     def verify_jwt_token(self, token: str) -> Optional[Dict[str, Any]]:
         try:
-            return jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_algorithm])
+            return jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_algorithm], issuer="revature-expense-manager-employee-app")
         except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
             # Grouped exceptions together
             return None

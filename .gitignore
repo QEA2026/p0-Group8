@@ -1,3 +1,7 @@
+# SQLite database
+*.db
+database/expense_manager.db
+
 # Maven build output
 target/
 **/target/
@@ -17,6 +21,7 @@ target/
 Thumbs.db
 
 # Logs
+logs/
 *.log
 
 # Environment files
