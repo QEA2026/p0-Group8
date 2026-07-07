@@ -74,9 +74,9 @@ public class ReportCLI {
 
         boolean hasData = printExpenseResponse(response);
 
-if (hasData) {
-    exportReport(endpoint);
-}
+        if (hasData) {
+            exportReport(endpoint);
+        }
     }
 
     private static void byCategory() {
@@ -133,13 +133,13 @@ if (hasData) {
 
         boolean hasData = printExpenseResponse(response);
 
-if (hasData) {
-    exportReport("/reports/category?category=" + category);
-}
+        if (hasData) {
+            exportReport("/reports/category?category=" + category);
+        }
 
-//         exportReport(
-//      "/reports/category?category=" + category
-// );
+        // exportReport(
+        // "/reports/category?category=" + category
+        // );
     }
 
     private static void byDate() {
@@ -157,73 +157,72 @@ if (hasData) {
                     "End Date (YYYY-MM-DD): ");
         }
 
-        String endpoint =
-        "/reports/date?startDate=" + start +
-        "&endDate=" + end;
+        String endpoint = "/reports/date?startDate=" + start +
+                "&endDate=" + end;
         String response = ApiClient.get(
                 "/reports/date?startDate=" + start +
                         "&endDate=" + end);
 
         boolean hasData = printExpenseResponse(response);
 
-if (hasData) {
-    exportReport(endpoint);
-}
+        if (hasData) {
+            exportReport(endpoint);
+        }
     }
 
     private static boolean printExpenseResponse(String response) {
 
-    if (response == null || response.isBlank()) {
-        System.out.println("No data found.");
-        return false;
-    }
+        if (response == null || response.isBlank()) {
+            System.out.println("No data found.");
+            return false;
+        }
 
-    try {
+        try {
 
-        if (response.startsWith("{")) {
+            if (response.startsWith("{")) {
 
-            class ErrorResponse {
-                public String message;
+                class ErrorResponse {
+                    public String message;
+                }
+
+                ErrorResponse error = mapper.readValue(response, ErrorResponse.class);
+
+                System.out.println("\nError: " + error.message);
+                return false;
             }
 
-            ErrorResponse error = mapper.readValue(response, ErrorResponse.class);
+            Expense[] expenses = mapper.readValue(response, Expense[].class);
 
-            System.out.println("\nError: " + error.message);
+            if (expenses.length == 0) {
+                System.out.println("No expenses found.");
+                return false;
+            }
+
+            ExpensePrinter.printList("Report Result", expenses);
+
+            return true;
+
+        } catch (Exception e) {
+            System.out.println(response);
             return false;
         }
-
-        Expense[] expenses = mapper.readValue(response, Expense[].class);
-
-        if (expenses.length == 0) {
-            System.out.println("No expenses found.");
-            return false;
-        }
-
-        ExpensePrinter.printList("Report Result", expenses);
-
-        return true;
-
-    } catch (Exception e) {
-        System.out.println(response);
-        return false;
     }
-}
 
     private static void exportReport(String endpoint) {
 
-    System.out.println("\nWould you like to export this report as CSV?");
-    System.out.println("1. Yes");
-    System.out.println("0. No");
+        System.out.println("\nWould you like to export this report as CSV?");
+        System.out.println("1. Yes");
+        System.out.println("0. No");
 
-    int choice = InputVal.readMenuChoice(0, 1);
+        int choice = InputVal.readMenuChoice(0, 1);
 
-    if (choice == 1) {
+        if (choice == 1) {
 
-        String exportEndpoint = endpoint + "&export=true";
+            String exportEndpoint = endpoint + "&export=true";
 
-        ApiClient.getWithHeaders(exportEndpoint);
+            ApiClient.getWithHeaders(exportEndpoint);
 
-        System.out.println("CSV export completed.");
+            System.out.println("CSV export completed.");
+        }
     }
-}
 }

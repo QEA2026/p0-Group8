@@ -1,0 +1,12 @@
+amount,category,date,description,id,userId
+3.0,Food,2026-06-20,3,2,1
+49.99,Entertainment,2026-06-24,"Database streaming service expense",4,1
+45.5,MEALS,2026-07-02,"Lunch with prospective client",5,1
+4.0,TRAVEL,2026-07-02,"new description lol",6,1
+46.5,OTHER,2026-07-01,"Rollercoastering with coyotes again.",8,1
+46.0,OTHER,2026-07-01,"Rollercoastering with coyotes again but now it should be coo.",9,1
+46.0,OTHER,2026-07-01,"Rollercoastering with coyotes again but now it should be coo.",10,1
+46.0,OTHER,2026-07-01,"Rollercoastering with coyotes again but now it should be coo.",11,1
+46.0,OTHER,2026-07-01,"Rollercoastering with coyotes again but now it should be coo.",12,1
+46.9,OTHER,2026-07-01,"Rollercoastering with coyotes again but now it should be coo.",13,1
+89.99,EQUIPMENT,1111-11-11,"a really cheap sofa",15,1

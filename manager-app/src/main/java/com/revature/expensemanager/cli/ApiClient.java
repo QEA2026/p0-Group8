@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 public class ApiClient {
 
@@ -18,9 +16,8 @@ public class ApiClient {
 
             if (Session.isLoggedIn()) {
                 conn.setRequestProperty(
-                "Authorization",
-                "Bearer " + Session.getToken()
-                );
+                        "Authorization",
+                        "Bearer " + Session.getToken());
             }
 
             conn.setRequestMethod("GET");
@@ -39,9 +36,8 @@ public class ApiClient {
 
             if (Session.isLoggedIn()) {
                 conn.setRequestProperty(
-                "Authorization",
-                "Bearer " + Session.getToken()
-                );
+                        "Authorization",
+                        "Bearer " + Session.getToken());
             }
 
             conn.setRequestMethod("POST");
@@ -61,82 +57,80 @@ public class ApiClient {
     }
 
     public static String put(String endpoint, String jsonBody) {
-    try {
-        URL url = java.net.URI.create(BASE_URL + endpoint).toURL();
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        try {
+            URL url = java.net.URI.create(BASE_URL + endpoint).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        if (Session.isLoggedIn()) {
+            if (Session.isLoggedIn()) {
                 conn.setRequestProperty(
-                "Authorization",
-                "Bearer " + Session.getToken()
-                );
+                        "Authorization",
+                        "Bearer " + Session.getToken());
             }
 
-        conn.setRequestMethod("PUT");
-        conn.setRequestProperty("Content-Type", "application/json");
-        conn.setDoOutput(true);
+            conn.setRequestMethod("PUT");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
 
-        try (OutputStream os = conn.getOutputStream()) {
-            os.write(jsonBody.getBytes());
-            os.flush();
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(jsonBody.getBytes());
+                os.flush();
+            }
+
+            return readResponse(conn);
+
+        } catch (Exception e) {
+            return "ERROR: " + e.getMessage();
         }
-
-        return readResponse(conn);
-
-    } catch (Exception e) {
-        return "ERROR: " + e.getMessage();
-    }
     }
 
     private static String readResponse(HttpURLConnection conn) throws IOException {
 
-    InputStream stream;
+        InputStream stream;
 
-    if (conn.getResponseCode() >= 400) {
-        stream = conn.getErrorStream();
-    } else {
-        stream = conn.getInputStream();
-    }
+        if (conn.getResponseCode() >= 400) {
+            stream = conn.getErrorStream();
+        } else {
+            stream = conn.getInputStream();
+        }
 
-    BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 
-    StringBuilder response = new StringBuilder();
-    String line;
+        StringBuilder response = new StringBuilder();
+        String line;
 
-    while ((line = br.readLine()) != null) {
-        response.append(line);
-    }
+        while ((line = br.readLine()) != null) {
+            response.append(line);
+        }
 
-    br.close();
-    return response.toString();
+        br.close();
+        return response.toString();
     }
 
     public static String getWithHeaders(String endpoint) {
 
-    try {
-        URL url = URI.create(BASE_URL + endpoint).toURL();
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        try {
+            URL url = URI.create(BASE_URL + endpoint).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        if (Session.isLoggedIn()) {
-            conn.setRequestProperty(
-                    "Authorization",
-                    "Bearer " + Session.getToken()
-            );
+            if (Session.isLoggedIn()) {
+                conn.setRequestProperty(
+                        "Authorization",
+                        "Bearer " + Session.getToken());
+            }
+
+            conn.setRequestMethod("GET");
+
+            String reportFile = conn.getHeaderField("Report-File");
+
+            if (reportFile != null) {
+                System.out.println("\nCSV Report Created:");
+                System.out.println(reportFile);
+            }
+
+            return readResponse(conn);
+
+        } catch (Exception e) {
+            return "ERROR: " + e.getMessage();
         }
-
-        conn.setRequestMethod("GET");
-
-        String reportFile = conn.getHeaderField("Report-File");
-
-        if (reportFile != null) {
-            System.out.println("\nCSV Report Created:");
-            System.out.println(reportFile);
-        }
-
-        return readResponse(conn);
-
-    } catch (Exception e) {
-        return "ERROR: " + e.getMessage();
     }
-}
 }
