@@ -7,6 +7,7 @@ from service.authentication_service import AuthenticationService
 
 
 TEST_JWT_SECRET = "unit-test-secret-key-at-least-32-chars"
+TEST_TOKEN_EXPIRATION_HOURS = 24
 
 
 def _hashed(password: str) -> str:
@@ -17,7 +18,11 @@ def _hashed(password: str) -> str:
 def test_login_returns_employee_on_valid_credentials(mocker):
     # Arrange: Mock setup, service instance, and expected return values
     repo = mocker.Mock()
-    service = AuthenticationService(repo, jwt_secret=TEST_JWT_SECRET)
+    service = AuthenticationService(
+        repo,
+        jwt_secret=TEST_JWT_SECRET,
+        token_expiration_hours=TEST_TOKEN_EXPIRATION_HOURS,
+    )
 
     user = User(id=1, username="brian", password=_hashed("password"), role="Employee")
     repo.find_by_username.return_value = user
@@ -32,7 +37,11 @@ def test_login_returns_employee_on_valid_credentials(mocker):
 def test_login_raises_value_error_for_unknown_username(mocker):
     # Arrange: Mock setup, service instance, and expected return values
     repo = mocker.Mock()
-    service = AuthenticationService(repo, jwt_secret=TEST_JWT_SECRET)
+    service = AuthenticationService(
+        repo,
+        jwt_secret=TEST_JWT_SECRET,
+        token_expiration_hours=TEST_TOKEN_EXPIRATION_HOURS,
+    )
     repo.find_by_username.return_value = None
 
     # Act & Assert: Attempt to login with an unknown username and expect a ValueError
@@ -43,7 +52,11 @@ def test_login_raises_value_error_for_unknown_username(mocker):
 def test_login_raises_value_error_for_bad_password(mocker):
     # Arrange: Mock setup, service instance, and expected return values
     repo = mocker.Mock()
-    service = AuthenticationService(repo, jwt_secret=TEST_JWT_SECRET)
+    service = AuthenticationService(
+        repo,
+        jwt_secret=TEST_JWT_SECRET,
+        token_expiration_hours=TEST_TOKEN_EXPIRATION_HOURS,
+    )
 
     user = User(id=1, username="brian", password=_hashed("password"), role="Employee")
     repo.find_by_username.return_value = user
@@ -56,7 +69,11 @@ def test_login_raises_value_error_for_bad_password(mocker):
 def test_login_blocks_manager_accounts(mocker):
     # Arrange: Mock setup, service instance, and expected return values
     repo = mocker.Mock()
-    service = AuthenticationService(repo, jwt_secret=TEST_JWT_SECRET)
+    service = AuthenticationService(
+        repo,
+        jwt_secret=TEST_JWT_SECRET,
+        token_expiration_hours=TEST_TOKEN_EXPIRATION_HOURS,
+    )
 
     manager = User(id=3, username="siri", password=_hashed("password"), role="Manager")
     repo.find_by_username.return_value = manager
@@ -69,7 +86,11 @@ def test_login_blocks_manager_accounts(mocker):
 def test_generate_and_verify_jwt_token_round_trip(mocker):
     # Arrange: Mock setup, service instance, and expected return values
     repo = mocker.Mock()
-    service = AuthenticationService(repo, jwt_secret=TEST_JWT_SECRET)
+    service = AuthenticationService(
+        repo,
+        jwt_secret=TEST_JWT_SECRET,
+        token_expiration_hours=TEST_TOKEN_EXPIRATION_HOURS,
+    )
 
     user = User(id=1, username="brian", password=_hashed("password"), role="Employee")
 

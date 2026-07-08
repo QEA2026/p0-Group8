@@ -32,7 +32,8 @@ def submit_expense():
         
         # D. Success! Send the receipt back.
         return jsonify({
-            "message": "Expense submitted successfully!",
+            "message": "Expense submitted successfully and is now pending manager review.",
+            "next_step": "Use GET /expenses/pending to review editable items, or GET /expenses/ledger for full history.",
             "expense_id": new_expense.id,
             "amount": expense_service.format_currency_amount(new_expense.amount)
         }), 201
@@ -40,11 +41,18 @@ def submit_expense():
     except ValueError as e:
         # If the Service catches bad data (e.g., negative amount, invalid category),
         # it raises a ValueError and returns a 400 Bad Request.
-        return jsonify({"error": str(e)}), 400
+        return jsonify({
+            "error": str(e),
+            "hint": "Confirm amount is positive, category is valid, and date uses YYYY-MM-DD."
+        }), 400
         
     except Exception as e:
         # A catch-all for any unexpected database crashes
-        return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
+        return jsonify({
+            "error": "Expense submission failed due to a server issue. Please try again.",
+            "next_step": "Retry in a moment. If the issue continues, contact support.",
+            "details": str(e)
+        }), 500
 
 
 @expense_bp.route('/ledger', methods=['GET'])
@@ -61,16 +69,31 @@ def get_ledger():
         # C. Ask the service for grouped ledger views (pending + history)
         ledger_data = expense_service.get_user_ledger(user.id)
 
+        # Add a friendly route-level note without changing ledger keys used by clients.
+        ledger_data["message"] = "Ledger retrieved successfully. Pending and history are included."
+        ledger_data["summary"] = {
+            "pending_count": len(ledger_data.get("pending_expenses", [])),
+            "history_count": len(ledger_data.get("expense_history", [])),
+        }
+        ledger_data["next_step"] = "Use GET /expenses/pending to see only editable pending items."
+
         # D. Return the grouped payload for CLI/client rendering
         return jsonify(ledger_data), 200
 
     except ValueError as e:
         # Service-level validation/processing errors
-        return jsonify({"error": str(e)}), 400
+        return jsonify({
+            "error": str(e),
+            "hint": "Verify your request is valid and your account has access to these records."
+        }), 400
 
     except Exception as e:
         # Catch-all for unexpected failures
-        return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
+        return jsonify({
+            "error": "Unable to retrieve your ledger right now. Please try again.",
+            "next_step": "Retry shortly. If this keeps failing, contact support.",
+            "details": str(e)
+        }), 500
 
 
 @expense_bp.route('/pending', methods=['GET'])
@@ -91,10 +114,17 @@ def get_pending_expenses():
         return jsonify({"pending_expenses": pending_expenses}), 200
 
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({
+            "error": str(e),
+            "hint": "Only pending expenses are editable/deletable by their owner."
+        }), 400
 
     except Exception as e:
-        return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
+        return jsonify({
+            "error": "Unable to retrieve pending expenses right now.",
+            "next_step": "Retry shortly. If this persists, contact support.",
+            "details": str(e)
+        }), 500
 
 
 @expense_bp.route('/<int:expense_id>', methods=['PUT'])
@@ -117,13 +147,23 @@ def update_expense(expense_id: int):
         )
 
         # D. Return success response after update
-        return jsonify({"message": "Expense updated successfully."}), 200
+        return jsonify({
+            "message": "Expense updated successfully.",
+            "next_step": "Use GET /expenses/pending to confirm the updated values."
+        }), 200
 
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({
+            "error": str(e),
+            "hint": "You can only edit your own pending expenses."
+        }), 400
 
     except Exception as e:
-        return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
+        return jsonify({
+            "error": "Unable to update this expense right now.",
+            "next_step": "Retry shortly. If this persists, contact support.",
+            "details": str(e)
+        }), 500
 
 
 @expense_bp.route('/<int:expense_id>', methods=['DELETE'])
@@ -142,11 +182,21 @@ def delete_expense(expense_id: int):
         )
 
         # C. Return success response after delete
-        return jsonify({"message": "Expense deleted successfully."}), 200
+        return jsonify({
+            "message": "Expense deleted successfully.",
+            "next_step": "Use GET /expenses/pending to verify it no longer appears."
+        }), 200
 
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({
+            "error": str(e),
+            "hint": "You can only delete your own pending expenses."
+        }), 400
 
     except Exception as e:
-        return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
+        return jsonify({
+            "error": "Unable to delete this expense right now.",
+            "next_step": "Retry shortly. If this persists, contact support.",
+            "details": str(e)
+        }), 500
     
