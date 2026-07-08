@@ -35,7 +35,11 @@ with sqlite3.connect(db_path) as conn:
 # Step 2: Seed users through the application layer
 # This ensures passwords are hashed before being stored.
 user_repo = UserRepository(str(db_path))
-auth_service = AuthenticationService(user_repo, "seed-secret-key")
+auth_service = AuthenticationService(
+    user_repository=user_repo,
+    jwt_secret="seed-only-unused-secrety",
+    token_expiration_hours=24,
+)
 
 auth_service.register_user("manager1", "managerpass", "manager")
 auth_service.register_user("manager2", "managerpass2", "manager")
