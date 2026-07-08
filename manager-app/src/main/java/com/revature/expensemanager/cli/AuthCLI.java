@@ -9,8 +9,8 @@ public class AuthCLI {
     public static boolean login() {
         System.out.println("\n--- Login ---");
   
-        String username = InputVal.readNonEmptyString("Username: ");
-        String password = InputVal.readNonEmptyString("Password: "); 
+        String username = InputVal.readNonEmptyString("Enter Username: ");
+        String password = InputVal.readNonEmptyString("Enter Password: "); 
 
         String body = "{"
                 + "\"username\":\"" + username + "\","

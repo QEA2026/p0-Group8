@@ -33,7 +33,7 @@ public class ExpenseCLI {
 
         System.out.println("\nDecision:");
         System.out.println("1. Approve");
-        System.out.println("2. Reject");
+        System.out.println("2. Deny");
         System.out.println("3. Cancel");
 
         int choice = InputVal.readMenuChoice(1, 3);
@@ -49,7 +49,7 @@ public class ExpenseCLI {
             }
         }
 
-        String comment = InputVal.readNonEmptyString("Comment: ");
+        String comment = InputVal.readNonEmptyString("Add a Comment: ");
 
         String body = "{"
                 + "\"status\":\"" + status + "\","

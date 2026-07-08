@@ -21,7 +21,7 @@ from utils import (
 )
 
 def show_menu():
-    print("\n=== Employee Expense Manager ===")
+    print("\n--- Employee Menu ---")
     print("1. Submit Expense")
     print("2. View Ledger")
     print("3. View Pending Expenses")
@@ -31,7 +31,7 @@ def show_menu():
     print("0. Exit")
 
 def main():
-    print("Starting Employee CLI...")
+    #print("Starting Employee CLI...")
 
     if not login_flow():
         print("Login failed. Exiting.")

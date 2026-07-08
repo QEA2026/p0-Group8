@@ -41,11 +41,9 @@ auth_service = AuthenticationService(
     token_expiration_hours=24,
 )
 
-auth_service.register_user("manager1", "managerpass", "manager")
-auth_service.register_user("manager2", "managerpass2", "manager")
-auth_service.register_user("alice", "alicepass", "employee")
-auth_service.register_user("bob", "bobpass", "employee")
-auth_service.register_user("carol", "carolpass", "employee")
+auth_service.register_user("brian", "password", "employee")
+auth_service.register_user("landon", "password", "employee")
+auth_service.register_user("siri", "password", "manager")
 
 print("Secure hashed users seeded successfully.")
 

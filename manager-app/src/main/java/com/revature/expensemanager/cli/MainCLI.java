@@ -50,8 +50,8 @@ public class MainCLI {
     private static void printMenu() {
     System.out.println("\n--- Manager Menu ---");
     System.out.println("1. View Pending Expenses");
-    System.out.println("2. Review Expense");
-    System.out.println("3. Reports");
+    System.out.println("2. Review Expenses");
+    System.out.println("3. View and Generate Reports");
     System.out.println("4. Logout");
     System.out.println("0. Exit");
     }
