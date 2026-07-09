@@ -23,11 +23,11 @@ def run_manager():
 while True:
 
     print("\n==============================")
-    print(" Expense Management System")
+    print(" Revature Expense Manager ")
     print("==============================")
-    print("1. Employee")
-    print("2. Manager")
-    print("0. Exit")
+    print("1. Login as Employee")
+    print("2. Login as Manager")
+    print("0. Exit Program")
 
     choice = input("Choose: ")
 
