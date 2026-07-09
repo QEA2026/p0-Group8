@@ -66,7 +66,7 @@ public List<EmployeeSummary> getEmployees() {
     String sql = """
             SELECT id, username, password, role
             FROM users
-            WHERE role = 'Employee'
+            WHERE LOWER(role) = 'employee'
             ORDER BY username
             """;
 

@@ -16,9 +16,9 @@ public class ReportCLI {
         while (true) {
 
             System.out.println("\n--- Reports ---");
-            System.out.println("1. By Employee");
-            System.out.println("2. By Category");
-            System.out.println("3. By Date Range");
+            System.out.println("1. Employee");
+            System.out.println("2. Category");
+            System.out.println("3. Date Range");
             System.out.println("0. Back");
 
             int choice = InputVal.readMenuChoice(0, 3);
@@ -211,12 +211,12 @@ public class ReportCLI {
     private static void exportReport(String endpoint) {
 
         System.out.println("\nWould you like to export this report as CSV?");
-        System.out.println("1. Yes");
-        System.out.println("0. No");
+        System.out.println("0. Yes");
+        System.out.println("1. No");
 
         int choice = InputVal.readMenuChoice(0, 1);
 
-        if (choice == 1) {
+        if (choice == 0) {
 
             String exportEndpoint = endpoint + "&export=true";
 
