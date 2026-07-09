@@ -28,7 +28,7 @@ def test_format_currency_amount_normalizes_to_two_decimals():
 
 
 def test_create_expense_calls_repo_with_clean_values(mocker):
-    # Arrange: Mock setup and expected return values
+    # Arrange: Mock setup and stubbed repo return value
     repo = mocker.Mock()
     service = ExpenseService(repo)
 
@@ -74,7 +74,7 @@ def test_create_expense_rejects_more_than_two_decimals(mocker):
 
 
 def test_get_user_ledger_splits_pending_and_history(mocker):
-    # Arrange: Mock setup, service instance, and expected return values
+    # Arrange: Mock setup, service instance, and stubbed repo return values
     repo = mocker.Mock()
     service = ExpenseService(repo)
 
@@ -94,7 +94,7 @@ def test_get_user_ledger_splits_pending_and_history(mocker):
 
 
 def test_update_pending_expense_rejects_non_owner(mocker):
-    # Arrange: Mock setup and service instance
+    # Arrange: Mock setup, service instance, and stubbed repo return value
     repo = mocker.Mock()
     service = ExpenseService(repo)
 
@@ -117,7 +117,7 @@ def test_update_pending_expense_rejects_non_owner(mocker):
 
 
 def test_update_pending_expense_updates_owned_pending(mocker):
-    # Arrange: Mock setup, service instance and expected return values
+    # Arrange: Mock setup, service instance and stubbed repo return values
     repo = mocker.Mock()
     service = ExpenseService(repo)
     

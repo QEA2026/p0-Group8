@@ -16,7 +16,7 @@ def _hashed(password: str) -> str:
 
 
 def test_login_returns_employee_on_valid_credentials(mocker):
-    # Arrange: Mock setup, service instance, and expected return values
+    # Arrange: Mock setup, service instance, and stubbed repo return values
     repo = mocker.Mock()
     service = AuthenticationService(
         repo,
@@ -35,7 +35,7 @@ def test_login_returns_employee_on_valid_credentials(mocker):
 
 
 def test_login_raises_value_error_for_unknown_username(mocker):
-    # Arrange: Mock setup, service instance, and expected return values
+    # Arrange: Mock setup, service instance, and stubbed repo return values
     repo = mocker.Mock()
     service = AuthenticationService(
         repo,
@@ -67,7 +67,7 @@ def test_login_raises_value_error_for_bad_password(mocker):
 
 
 def test_login_blocks_manager_accounts(mocker):
-    # Arrange: Mock setup, service instance, and expected return values
+    # Arrange: Mock setup, service instance, and stubbed repo return values
     repo = mocker.Mock()
     service = AuthenticationService(
         repo,
@@ -84,7 +84,7 @@ def test_login_blocks_manager_accounts(mocker):
 
 
 def test_generate_and_verify_jwt_token_round_trip(mocker):
-    # Arrange: Mock setup, service instance, and expected return values
+    # Arrange: Mock setup, service instance, and stubbed repo return values
     repo = mocker.Mock()
     service = AuthenticationService(
         repo,
