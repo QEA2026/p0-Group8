@@ -25,7 +25,8 @@ def client(app):
 def temp_db_path(tmp_path):
     db_path = tmp_path / "expense_manager_test.db"
 
-    with sqlite3.connect(db_path) as conn:
+    conn = sqlite3.connect(db_path)
+    try:
         conn.executescript(SCHEMA_PATH.read_text())
         conn.execute(
             "INSERT INTO users (id, username, password, role) VALUES (?, ?, ?, ?)",
@@ -64,5 +65,7 @@ def temp_db_path(tmp_path):
             (3, 3, "denied", 3, "Missing receipt", "2026-07-03"),
         )
         conn.commit()
+    finally:
+        conn.close()
 
     return str(db_path)
