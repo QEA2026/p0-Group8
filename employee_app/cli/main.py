@@ -22,16 +22,15 @@ from utils import (
 
 def show_menu():
     print("\n--- Employee Menu ---")
-    print("1. Submit Expense")
+    print("1. Submit an Expense")
     print("2. View Ledger")
-    print("3. View Pending Expenses")
+    print("3. View Pending Expenses Only")
     print("4. Edit Expense")
     print("5. Delete Expense")
     print("6. Logout")
     print("0. Exit")
 
 def main():
-    #print("Starting Employee CLI...")
 
     if not login_flow():
         print("Login failed. Exiting.")

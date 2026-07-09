@@ -13,7 +13,6 @@ public class MainCLI {
     while (true) {
         printMenu();
 
-        //String choice = scanner.nextLine();
         int choice = InputVal.readMenuChoice(0,4);
 
         switch (choice) {
@@ -49,8 +48,8 @@ public class MainCLI {
 
     private static void printMenu() {
     System.out.println("\n--- Manager Menu ---");
-    System.out.println("1. View Pending Expenses");
-    System.out.println("2. Review Expenses");
+    System.out.println("1. View All Pending Expenses");
+    System.out.println("2. Review Pending Expenses");
     System.out.println("3. View and Generate Reports");
     System.out.println("4. Logout");
     System.out.println("0. Exit");

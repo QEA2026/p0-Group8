@@ -31,7 +31,7 @@ public class ExpenseCLI {
 
         int id = InputVal.readPositiveInt("Expense ID: ");
 
-        System.out.println("\nDecision:");
+        System.out.println("\nInput Decision:");
         System.out.println("1. Approve");
         System.out.println("2. Deny");
         System.out.println("3. Cancel");
